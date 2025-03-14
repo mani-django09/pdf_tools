@@ -1,0 +1,1207 @@
+
+{% extends 'base.html' %}
+
+{% block title %}JPG to PNG Converter | Convert JPG to PNG Online Free | ilovepdf.link{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .dropzone {
+        border: 2px dashed #0d6efd;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    
+    .dropzone.dragover {
+        background-color: #e9ecef;
+        border-color: #0b5ed7;
+    }
+    
+    .file-item {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .file-info {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
+    
+    .file-icon {
+        margin-right: 15px;
+        color: #0d6efd;
+    }
+    
+    .progress {
+        height: 5px;
+        margin-top: 5px;
+        width: 100%;
+    }
+    
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .thumbnail {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 15px;
+    }
+    
+    .preview-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    .preview-image {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .preview-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255,255,255,0.8);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    
+    .result-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+        display: none;
+    }
+    
+    .result-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .file-details {
+        margin-top: 10px;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,255,255,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        display: none;
+    }
+    
+    .loading-content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .file-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .image-card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background-color: white;
+        position: relative;
+    }
+    
+    .image-card .thumbnail-wrapper {
+        height: 150px;
+        overflow: hidden;
+        position: relative;
+        background-color: #f8f9fa;
+    }
+    
+    .image-card .thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        margin: 0;
+    }
+    
+    .image-card .file-details {
+        padding: 10px;
+        text-align: center;
+    }
+    
+    .image-card .file-name {
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 5px;
+    }
+    
+    .image-card .file-size {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .image-card .file-actions {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    
+    .image-card .btn-remove {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background-color: rgba(255,255,255,0.8);
+    }
+    
+    .format-badge {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0,0,0,0.6);
+        color: white;
+        text-align: center;
+        padding: 3px 0;
+        font-size: 0.8rem;
+    }
+    
+    .comparison-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .comparison-item {
+        flex: 1;
+        min-width: 200px;
+        max-width: 300px;
+        text-align: center;
+    }
+    
+    .comparison-image {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .comparison-title {
+        margin-top: 10px;
+        font-weight: 600;
+    }
+    
+    .comparison-details {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .quality-badge {
+        display: inline-block;
+        background-color: #28a745;
+        color: white;
+        font-size: 0.8rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-left: 5px;
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #0d6efd;
+    }
+    
+    .compare-table {
+        margin-top: 30px;
+    }
+    
+    .compare-table th {
+        background-color: #f1f8ff;
+        text-align: center;
+    }
+    
+    .advantage {
+        color: #28a745;
+    }
+    
+    .disadvantage {
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="tool-header py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="mb-3">JPG to PNG Converter</h1>
+                <p class="lead mb-4">Convert JPG to PNG online with ilovepdf.link's free JPG to PNG converter. Transform your JPEG images to high-quality, lossless PNG format with transparency support.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="converter py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="convertForm" enctype="multipart/form-data">
+                            <div id="dropzone" class="dropzone mb-4">
+                                <div class="dropzone-content">
+                                    <i class="fas fa-file-image fa-3x mb-3 text-primary"></i>
+                                    <h4>Drag & Drop JPG files here</h4>
+                                    <p class="mb-2">Convert JPG to PNG instantly with ilovepdf.link's free converter</p>
+                                    <p>or</p>
+                                    <button type="button" id="browseButton" class="btn btn-primary">
+                                        <i class="fas fa-file-image me-2"></i> Browse JPG Files
+                                    </button>
+                                    <input type="file" id="fileInput" multiple accept="image/jpeg" class="d-none">
+                                </div>
+                            </div>
+                            
+                            <div id="filesContainer" class="d-none">
+                                <h5 class="mb-3">Selected Images</h5>
+                                <div id="fileGrid" class="file-grid mb-4"></div>
+                            </div>
+                            
+                            <div id="previewContainer" class="preview-container mb-4 d-none">
+                                <img id="previewImage" class="preview-image" src="" alt="Preview">
+                                <div id="previewLoading" class="preview-loading">
+                                    <div class="spinner-border text-primary mb-2" role="status">
+                                        <span class="visually-hidden">Loading preview...</span>
+                                    </div>
+                                    <p class="mb-0">Loading preview...</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" id="convertButton" class="btn btn-primary btn-lg" disabled>
+                                    <i class="fas fa-exchange-alt me-2"></i> Convert JPG to PNG
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Conversion Result -->
+                        <div id="resultContainer" class="result-container">
+                            <h4 class="mb-4">Conversion Completed</h4>
+                            
+                            <div class="comparison-container" id="comparisonContainer">
+                                <!-- Will be populated with before/after images -->
+                            </div>
+                            
+                            <div class="file-details mb-3">
+                                <p id="resultFileName" class="mb-1 fw-bold"></p>
+                                <p id="resultFileSize" class="text-muted mb-1"></p>
+                                <p id="conversionDetails" class="text-muted small mb-3">
+                                    <span class="quality-badge">Lossless Quality</span>
+                                </p>
+                            </div>
+                            
+                            <div class="result-actions">
+                                <button id="downloadButton" class="btn btn-success">
+                                    <i class="fas fa-download me-2"></i> Download PNG
+                                </button>
+                                <button id="newConversionButton" class="btn btn-outline-primary">
+                                    <i class="fas fa-redo me-2"></i> New Conversion
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Global Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 id="loadingMessage">Converting JPG to PNG...</h5>
+        <p class="text-muted">Please wait, this may take a moment</p>
+    </div>
+</div>
+
+<section class="tool-info py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3>About JPG to PNG Conversion</h3>
+                <p><strong>Why convert JPG to PNG?</strong> While JPG (or JPEG) is great for photographs, the PNG format offers several advantages for certain types of images. Our free JPG to PNG converter helps you transition from the lossy JPG format to the lossless PNG format, providing better quality for graphics, screenshots, and images with text.</p>
+                
+                <p>When you convert JPG to PNG with ilovepdf.link, you're upgrading your images from a compressed format to one that preserves all details. Here's why this matters:</p>
+                
+                <h4 class="mt-4">Benefits of Converting JPG to PNG</h4>
+                <ul>
+                    <li><strong>Lossless Quality:</strong> PNG uses lossless compression, meaning it preserves all image data without degradation—unlike JPG's lossy compression that discards some information.</li>
+                    <li><strong>Transparency Support:</strong> PNG files support transparency (alpha channel), allowing parts of your image to be see-through—perfect for logos, icons, and overlays.</li>
+                    <li><strong>No Compression Artifacts:</strong> JPG images often show "blocky" artifacts, especially around text or sharp edges. Converting to PNG eliminates these quality issues.</li>
+                    <li><strong>Better for Editing:</strong> PNG images are ideal for further editing as they don't degrade with each save, unlike JPGs that lose quality with each edit.</li>
+                    <li><strong>Sharper Text and Graphics:</strong> Text, lines, and graphics appear sharper and cleaner in PNG format, making it ideal for screenshots, diagrams, and illustrations.</li>
+                </ul>
+                
+                <div class="mt-4">
+                    <h4>JPG vs. PNG: The Key Differences</h4>
+                    <table class="table compare-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>JPG Format</th>
+                                <th>PNG Format</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Compression</td>
+                                <td class="disadvantage">Lossy (discards data)</td>
+                                <td class="advantage">Lossless (preserves data)</td>
+                            </tr>
+                            <tr>
+                                <td>Transparency</td>
+                                <td class="disadvantage">Not supported</td>
+                                <td class="advantage">Fully supported</td>
+                            </tr>
+                            <tr>
+                                <td>File Size</td>
+                                <td class="advantage">Smaller</td>
+                                <td class="disadvantage">Larger</td>
+                            </tr>
+                            <tr>
+                                <td>Best For</td>
+                                <td>Photographs, realistic images</td>
+                                <td>Graphics, text, screenshots, illustrations</td>
+                            </tr>
+                            <tr>
+                                <td>Quality After Editing</td>
+                                <td class="disadvantage">Degrades with each save</td>
+                                <td class="advantage">Maintains quality</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h3>How to Use Our Free JPG to PNG Converter</h3>
+                <p>Converting your JPG images to high-quality PNG format has never been easier. Follow these simple steps:</p>
+                
+                <ol>
+                    <li><strong>Upload Your JPG Files:</strong> Drag and drop your JPG/JPEG images into the upload area or click "Browse JPG Files" to select images from your device. You can convert multiple JPG files at once.</li>
+                    <li><strong>Preview Your Images:</strong> After uploading, you'll see thumbnails of your images. You can click on any image to preview it before conversion.</li>
+                    <li><strong>Convert to PNG:</strong> Click the "Convert JPG to PNG" button to start the conversion process. Our advanced algorithm will convert your JPG images to lossless PNG format while preserving image quality.</li>
+                    <li><strong>View and Compare:</strong> After conversion, you'll see a comparison of your original JPG and the new PNG version, highlighting the quality improvements.</li>
+                    <li><strong>Download Your PNG Files:</strong> Download your newly converted PNG images individually or as a ZIP archive for multiple files.</li>
+                </ol>
+                
+                <div class="mt-4 mb-4">
+                    <h4>Perfect For:</h4>
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-desktop feature-icon"></i>
+                                <h5>Screenshots</h5>
+                                <p class="small">Convert JPG screenshots to PNG for sharper text and cleaner lines.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-paint-brush feature-icon"></i>
+                                <h5>Digital Art</h5>
+                                <p class="small">Preserve the quality of your artwork without compression artifacts.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-font feature-icon"></i>
+                                <h5>Text & Graphics</h5>
+                                <p class="small">Maintain crisp text and sharp lines in diagrams and infographics.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-object-group feature-icon"></i>
+                                <h5>Logos & Icons</h5>
+                                <p class="small">Convert logos to PNG format for transparency support.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info" role="alert">
+                    <h5><i class="fas fa-info-circle me-2"></i> Important Note</h5>
+                    <p class="mb-0">Converting from JPG to PNG will preserve the current quality of your image, but cannot recover details already lost through JPG compression. For best results, use the highest quality JPG images as your source files.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bolt fa-3x text-primary mb-3"></i>
+                        <h4>Fast Online Conversion</h4>
+                        <p>Our JPG to PNG converter works entirely in your browser, delivering lightning-fast conversions without lengthy uploads. Convert your JPG files to PNG format in seconds, even for large images.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                        <h4>100% Secure & Private</h4>
+                        <p>Your privacy matters to us. All JPG to PNG conversions happen securely on our servers, and your files are automatically deleted after processing. We never keep or access your images.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-gem fa-3x text-primary mb-3"></i>
+                        <h4>Premium Quality, Zero Cost</h4>
+                        <p>Unlike other online tools, our JPG to PNG converter is completely free, with no watermarks or quality limitations. Get professional-grade PNG conversions without paying a penny.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Frequently Asked Questions About JPG to PNG Conversion</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Will converting JPG to PNG improve image quality?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Converting JPG to PNG will not recover quality that has already been lost through JPG compression, but it offers several advantages:</p>
+                                
+                                <ul>
+                                    <li>PNG's lossless format will preserve the current quality of your JPG without further degradation</li>
+                                    <li>It eliminates additional quality loss that would occur if you were to edit and re-save the image as JPG multiple times</li>
+                                    <li>Text and sharp edges often appear cleaner in PNG format compared to JPG</li>
+                                    <li>PNG format eliminates compression artifacts (blocky patterns) commonly seen in JPG images</li>
+                                </ul>
+                                
+                                <p>For best results, start with the highest quality JPG images you have available. While converting to PNG won't restore lost details, it will prevent any further quality degradation in future editing and ensure the best possible output from your current JPG files.</p>
+                                
+                                <p>PNG is particularly beneficial for images with text, graphics, or illustrations, where sharpness and clean edges are important. For photographs with smooth color transitions, the visible quality difference might be less noticeable, but PNG still offers the advantage of preventing additional quality loss during future edits.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Will the PNG file be larger than the original JPG?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Yes, in most cases, PNG files will be larger than their JPG counterparts. This is because:</p>
+                                
+                                <ul>
+                                    <li><strong>Different Compression Methods:</strong> JPG uses lossy compression that reduces file size by permanently discarding certain image data. PNG uses lossless compression that preserves all image data, resulting in larger files.</li>
+                                    <li><strong>Quality Preservation:</strong> The larger file size is a trade-off for better image quality, especially for graphics, text, and images with sharp edges.</li>
+                                    <li><strong>Content-Dependent Size Increase:</strong> The difference in size varies based on image content. Simple images with few colors might see a modest increase, while complex photographs could result in PNG files 2-5 times larger than their JPG versions.</li>
+                                </ul>
+                                
+                                <p>For most web and digital uses, the increase in file size is a worthwhile trade-off for the quality benefits, especially when:</p>
+                                
+                                <ul>
+                                    <li>You need transparency in your images</li>
+                                    <li>You plan to edit the images further</li>
+                                    <li>Your images contain text or precise graphics</li>
+                                    <li>You need to eliminate compression artifacts</li>
+                                </ul>
+                                
+                                <p>If file size is a critical concern, our converter creates optimized PNG files that balance quality preservation with reasonable file sizes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Can I add transparency when converting JPG to PNG?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>While our basic JPG to PNG converter transfers the image exactly as is (without adding transparency), there's an important distinction to understand:</p>
+                                
+                                <ul>
+                                    <li><strong>Format Capability:</strong> Converting to PNG gives your image the <em>capability</em> to support transparency, but doesn't automatically make any parts of it transparent.</li>
+                                    <li><strong>JPG Limitation:</strong> JPG images don't support transparency at all—every pixel has a solid color.</li>
+                                </ul>
+                                
+                                <p>To add transparency to your image after converting from JPG to PNG, you'll need to:</p>
+                                
+                                <ol>
+                                    <li>First convert your JPG to PNG using our tool</li>
+                                    <li>Open the resulting PNG file in an image editor like Photoshop, GIMP, or even online editors</li>
+                                    <li>Use the editor's tools to select and make transparent the areas you want (typically through background removal or magic wand selection)</li>
+                                    <li>Save the edited file as PNG to preserve the transparency you've added</li>
+                                </ol>
+                                
+                                <p>For users who need automatic background removal and transparency, we offer a separate specialized <a href="#">Background Removal Tool</a> that can automatically detect and remove backgrounds, creating transparent PNG images in one step.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Which is better for my needs: JPG or PNG?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Choosing between JPG and PNG depends on your specific needs:</p>
+                                
+                                <h5 class="mt-3">Choose PNG when:</h5>
+                                <ul>
+                                    <li><strong>You need transparency</strong> – PNG supports alpha channel transparency; JPG doesn't</li>
+                                    <li><strong>Your image contains text or sharp graphics</strong> – PNG keeps text crisp and lines sharp without compression artifacts</li>
+                                    <li><strong>You'll be editing the image further</strong> – PNG's lossless format prevents quality degradation with multiple edits and saves</li>
+                                    <li><strong>Quality is more important than file size</strong> – PNG preserves all details at the cost of larger files</li>
+                                    <li><strong>You're working with screenshots, diagrams, logos, or illustrations</strong> – PNG excels for these content types</li>
+                                </ul>
+                                
+                                <h5 class="mt-3">Choose JPG when:</h5>
+                                <ul>
+                                    <li><strong>File size is critical</strong> – JPG files are smaller, making them better for web pages where loading speed matters</li>
+                                    <li><strong>Your image is a photograph</strong> – JPG was designed specifically for photographic content</li>
+                                    <li><strong>The image has smooth color transitions</strong> – JPG handles gradients and smooth transitions efficiently</li>
+                                    <li><strong>Storage space is limited</strong> – For large photo collections, JPG's smaller size can save significant space</li>
+                                    <li><strong>Transparency isn't needed</strong> – If you don't need transparent elements, JPG might be sufficient</li>
+                                </ul>
+                                
+                                <p>In many professional workflows, it's common practice to keep a PNG or other lossless format as your "master" file for editing, and then export JPG versions for specific use cases where smaller file size is beneficial.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                Is there a file size limit for the JPG to PNG converter?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Our free JPG to PNG converter supports files up to 50MB per image. This limit accommodates most standard use cases, including high-resolution photographs and detailed graphics.</p>
+                                
+                                <p>Some important points about file sizes:</p>
+                                
+                                <ul>
+                                    <li><strong>Batch Processing:</strong> You can convert multiple JPG files simultaneously (up to 20 files at once), as long as each individual file is under the 50MB limit.</li>
+                                    <li><strong>Output Size Increase:</strong> Remember that PNG files are typically larger than their JPG counterparts. A 10MB JPG might convert to a 20-30MB PNG, depending on the image content.</li>
+                                    <li><strong>Resolution Impact:</strong> The converter preserves the original resolution of your images. Higher resolution images (like 4K or 8K) will naturally result in larger file sizes, both before and after conversion.</li>
+                                </ul>
+                                
+                                <p>For users with specialized needs requiring conversion of extremely large JPG files (over 50MB), we offer premium plans with increased file size limits and additional features.</p>
+                                
+                                <p>If you're working with exceptionally large images, consider using image editing software to resize your JPG to a more manageable size before conversion, or splitting your conversion into multiple sessions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSix">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                How secure is my data when using the online JPG to PNG converter?
+                            </button>
+                        </h2>
+                        <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>At ilovepdf.link, we take your data security and privacy extremely seriously. Here's how we protect your images during the conversion process:</p>
+                                
+                                <ul>
+                                    <li><strong>Secure Connections:</strong> All uploads and downloads use secure HTTPS connections with strong encryption to protect your files during transfer.</li>
+                                    <li><strong>Temporary Storage:</strong> Your JPG files and converted PNG images are stored in a secure, temporary location only for the duration needed to complete the conversion.</li>
+                                    <li><strong>Automatic Deletion:</strong> All uploaded JPGs and generated PNGs are automatically deleted from our servers within 24 hours of conversion, typically much sooner.</li>
+                                    <li><strong>No Content Access:</strong> Our system processes your files automatically—no humans view or access your images at any point.</li>
+                                    <li><strong>No Registration Required:</strong> We don't collect personal information or require user accounts to use our converter.</li>
+                                    <li><strong>No Data Sharing:</strong> We never share your files, conversion data, or usage information with third parties.</li>
+                                </ul>
+                                
+                                <p>Our JPG to PNG conversion happens server-side for optimal quality, but we utilize temporary, secure storage to ensure your files remain private throughout the process. This makes our converter suitable for both personal and professional use, even with sensitive or confidential images.</p>
+                                
+                                <p>For users with heightened security concerns, we recommend our premium plans which offer additional security features like password-protected conversions and extended data protection measures.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="additional-info py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="text-center mb-5">Why Choose ilovepdf.link's Free JPG to PNG Converter</h2>
+                
+                <div class="mb-5">
+                    <h3>When to Convert JPG to PNG</h3>
+                    <p>There are several specific scenarios where converting from JPG to PNG format is particularly beneficial:</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-images text-primary me-2"></i> Graphics with Text</h5>
+                                    <p>JPG compression often creates visible artifacts around text, making it appear blurry or distorted. Converting to PNG ensures your text remains crisp and readable—perfect for infographics, memes, or instructional images.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-desktop text-primary me-2"></i> Screenshots and UI Elements</h5>
+                                    <p>Screenshots containing text, interface elements, or sharp edges benefit enormously from PNG's lossless format. Convert your JPG screenshots to PNG for maximum clarity and professional appearance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-pencil-ruler text-primary me-2"></i> Digital Art and Illustrations</h5>
+                                    <p>If you've saved your artwork as JPG and plan to edit it further, converting to PNG prevents quality degradation with each subsequent save. This is crucial for preserving the integrity of digital illustrations.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-building text-primary me-2"></i> Logos and Branding Materials</h5>
+                                    <p>Company logos and branding elements often require transparency and perfect edge quality. Converting JPG logos to PNG provides a foundation for creating materials with transparent backgrounds and pristine quality.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <h3>Best Practices for JPG to PNG Conversion</h3>
+                    <p>To achieve the best results when converting JPG to PNG with our free online tool, follow these professional tips:</p>
+                    <ol class="mt-4">
+                        <li class="mb-3"><strong>Start with high-quality JPGs:</strong> Use the highest quality JPG files available as your source. Since JPG is a lossy format, starting with low-quality or highly compressed JPGs will result in lower quality PNGs.</li>
+                        <li class="mb-3"><strong>Consider the purpose:</strong> For images that will be edited further, displayed at large sizes, or require perfect clarity (like text or diagrams), PNG is clearly superior. For simple photos destined for web use, the benefits may be less significant.</li>
+                        <li class="mb-3"><strong>Be aware of file size increases:</strong> Plan for PNG files that may be 2-5 times larger than their JPG equivalents, especially for complex images or photographs.</li>
+                        <li class="mb-3"><strong>Check the conversion results:</strong> Our converter shows you a preview of both the original JPG and converted PNG. Examine the outputs to ensure they meet your quality requirements.</li>
+                        <li class="mb-3"><strong>Batch process efficiently:</strong> For multiple related images (like product photos or documentation screenshots), convert them all at once to maintain consistent quality across the set.</li>
+                    </ol>
+                </div>
+                
+                <div class="alert alert-info mt-5" role="alert">
+                    <h4 class="alert-heading"><i class="fas fa-lightbulb me-2"></i> Pro Tip!</h4>
+                    <p>When working with photographs that contain both important text and photographic elements, consider selectively converting only the portions that benefit most from PNG format. For example, you might crop out just the text/diagram areas for PNG conversion, while keeping the photographic portions as space-efficient JPGs.</p>
+                    <hr>
+                    <p class="mb-0">At ilovepdf.link, we provide a complete suite of image conversion and editing tools, including our JPG to PNG converter, PNG compressor, and image resizing tools—all designed to work together seamlessly for your image processing needs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const browseButton = document.getElementById('browseButton');
+        const filesContainer = document.getElementById('filesContainer');
+        const fileGrid = document.getElementById('fileGrid');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const previewLoading = document.getElementById('previewLoading');
+        const convertButton = document.getElementById('convertButton');
+        const convertForm = document.getElementById('convertForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const comparisonContainer = document.getElementById('comparisonContainer');
+        const resultFileName = document.getElementById('resultFileName');
+        const resultFileSize = document.getElementById('resultFileSize');
+        const conversionDetails = document.getElementById('conversionDetails');
+        const downloadButton = document.getElementById('downloadButton');
+        const newConversionButton = document.getElementById('newConversionButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        // State variables
+        let files = [];
+        let currentFile = null;
+        let convertedBlob = null;
+        let convertedFileName = '';
+        let originalImageUrl = '';
+        let convertedImageUrl = '';
+        
+        // Handle browse button click
+        browseButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+        
+        // Handle drag and drop events
+        dropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+        });
+        
+        dropzone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+        });
+        
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+        
+        // Handle files
+        function handleFiles(fileList) {
+            // Filter for JPG files
+            const jpgFiles = Array.from(fileList).filter(file => 
+                file.type === 'image/jpeg' || file.name.toLowerCase().endsWith('.jpg') || file.name.toLowerCase().endsWith('.jpeg')
+            );
+            
+            if (jpgFiles.length === 0) {
+                alert('Please select JPG/JPEG image files only. Other image formats are not supported.');
+                return;
+            }
+            
+            // Add files to our array
+            files = [...jpgFiles];
+            currentFile = files[0]; // Set the first file as current
+            
+            // Update file grid
+            updateFileGrid();
+            
+            // Show files container
+            filesContainer.classList.remove('d-none');
+            
+            // Show preview of the first file
+            showPreview(currentFile);
+            
+            // Enable convert button
+            convertButton.disabled = files.length === 0;
+        }
+        
+        // Show preview of the selected file
+        function showPreview(file) {
+            if (!file) return;
+            
+            // Show preview container and loading indicator
+            previewContainer.classList.remove('d-none');
+            previewLoading.style.display = 'block';
+            previewImage.style.opacity = '0.3';
+            
+            // Create file reader for preview
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                // Delay to simulate loading (can be removed in production)
+                setTimeout(() => {
+                    previewImage.src = e.target.result;
+                    originalImageUrl = e.target.result;
+                    previewImage.style.opacity = '1';
+                    previewLoading.style.display = 'none';
+                }, 500);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // Update file grid
+        function updateFileGrid() {
+            fileGrid.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                const fileCard = document.createElement('div');
+                fileCard.className = 'image-card';
+                
+                const thumbnailWrapper = document.createElement('div');
+                thumbnailWrapper.className = 'thumbnail-wrapper';
+                
+                // Create file actions
+                const fileActions = document.createElement('div');
+                fileActions.className = 'file-actions';
+                
+                const removeButton = document.createElement('button');
+                removeButton.className = 'btn btn-sm btn-danger btn-remove';
+                removeButton.innerHTML = '<i class="fas fa-times"></i>';
+                removeButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    files.splice(index, 1);
+                    updateFileGrid();
+                    
+                    if (files.length === 0) {
+                        filesContainer.classList.add('d-none');
+                        previewContainer.classList.add('d-none');
+                        convertButton.disabled = true;
+                    } else if (currentFile === file) {
+                        currentFile = files[0];
+                        showPreview(currentFile);
+                    }
+                });
+                fileActions.appendChild(removeButton);
+                thumbnailWrapper.appendChild(fileActions);
+                
+                // Create format badge
+                const formatBadge = document.createElement('div');
+                formatBadge.className = 'format-badge';
+                formatBadge.textContent = 'JPG';
+                thumbnailWrapper.appendChild(formatBadge);
+                
+                // Create thumbnail
+                const thumbnail = document.createElement('img');
+                thumbnail.className = 'thumbnail';
+                thumbnail.alt = file.name;
+                
+                // Read file for thumbnail preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    thumbnail.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                
+                thumbnailWrapper.appendChild(thumbnail);
+                fileCard.appendChild(thumbnailWrapper);
+                
+                // File details
+                const fileDetails = document.createElement('div');
+                fileDetails.className = 'file-details';
+                
+                const fileName = document.createElement('div');
+                fileName.className = 'file-name';
+                fileName.textContent = truncateFilename(file.name, 20);
+                fileName.title = file.name;
+                fileDetails.appendChild(fileName);
+                
+                const fileSize = document.createElement('div');
+                fileSize.className = 'file-size';
+                fileSize.textContent = formatFileSize(file.size);
+                fileDetails.appendChild(fileSize);
+                
+                fileCard.appendChild(fileDetails);
+                
+                // Add click event to show preview
+                fileCard.addEventListener('click', function() {
+                    currentFile = file;
+                    showPreview(file);
+                });
+                
+                fileGrid.appendChild(fileCard);
+            });
+        }
+        
+        // Truncate filename if too long
+        function truncateFilename(filename, maxLength) {
+            if (filename.length <= maxLength) return filename;
+            
+            const extension = filename.split('.').pop();
+            const nameWithoutExt = filename.substring(0, filename.length - extension.length - 1);
+            
+            if (nameWithoutExt.length <= maxLength - 3) return filename;
+            
+            return nameWithoutExt.substring(0, maxLength - 3) + '...' + (extension ? '.' + extension : '');
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Calculate size difference percentage
+        function calculateSizeDifference(oldSize, newSize) {
+            const difference = newSize - oldSize;
+            const percentChange = (difference / oldSize) * 100;
+            return Math.round(percentChange);
+        }
+        
+        // Handle new conversion button
+        newConversionButton.addEventListener('click', function() {
+            resultContainer.style.display = 'none';
+            dropzone.style.display = 'block';
+            convertButton.style.display = 'block';
+            
+            // Clear previous conversion
+            convertedBlob = null;
+            convertedFileName = '';
+            originalImageUrl = '';
+            convertedImageUrl = '';
+            
+            // Clear URL objects
+            if (originalImageUrl && originalImageUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(originalImageUrl);
+            }
+            if (convertedImageUrl && convertedImageUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(convertedImageUrl);
+            }
+            
+            // Reset
+            files = [];
+            currentFile = null;
+            filesContainer.classList.add('d-none');
+            previewContainer.classList.add('d-none');
+            convertButton.disabled = true;
+            fileGrid.innerHTML = '';
+            comparisonContainer.innerHTML = '';
+            fileInput.value = '';
+        });
+        
+        // Handle download button
+        downloadButton.addEventListener('click', function() {
+            if (!convertedBlob) return;
+            
+            // Show loading spinner on the download button
+            const originalButtonText = downloadButton.innerHTML;
+            downloadButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Downloading...';
+            downloadButton.disabled = true;
+            
+            // Short timeout to ensure the loading state is visible
+            setTimeout(() => {
+                const downloadUrl = URL.createObjectURL(convertedBlob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = convertedFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
+                
+                // Restore button after download starts
+                setTimeout(() => {
+                    downloadButton.innerHTML = originalButtonText;
+                    downloadButton.disabled = false;
+                }, 1000);
+            }, 500);
+        });
+        
+        // Create comparison view
+        function createComparisonView(originalUrl, convertedUrl, originalSize, convertedSize) {
+            comparisonContainer.innerHTML = '';
+            
+            // Original image
+            const originalItem = document.createElement('div');
+            originalItem.className = 'comparison-item';
+            
+            const originalImage = document.createElement('img');
+            originalImage.className = 'comparison-image';
+            originalImage.src = originalUrl;
+            originalImage.alt = 'Original JPG';
+            originalItem.appendChild(originalImage);
+            
+            const originalTitle = document.createElement('div');
+            originalTitle.className = 'comparison-title';
+            originalTitle.textContent = 'Original JPG';
+            originalItem.appendChild(originalTitle);
+            
+            const originalDetails = document.createElement('div');
+            originalDetails.className = 'comparison-details';
+            originalDetails.textContent = formatFileSize(originalSize);
+            originalItem.appendChild(originalDetails);
+            
+            comparisonContainer.appendChild(originalItem);
+            
+            // Converted image
+            const convertedItem = document.createElement('div');
+            convertedItem.className = 'comparison-item';
+            
+            const convertedImage = document.createElement('img');
+            convertedImage.className = 'comparison-image';
+            convertedImage.src = convertedUrl;
+            convertedImage.alt = 'Converted PNG';
+            convertedItem.appendChild(convertedImage);
+            
+            const convertedTitle = document.createElement('div');
+            convertedTitle.className = 'comparison-title';
+            convertedTitle.textContent = 'Converted PNG';
+            convertedItem.appendChild(convertedTitle);
+            
+            const convertedDetails = document.createElement('div');
+            convertedDetails.className = 'comparison-details';
+            convertedDetails.textContent = formatFileSize(convertedSize);
+            convertedItem.appendChild(convertedDetails);
+            
+            comparisonContainer.appendChild(convertedItem);
+        }
+        
+        // Handle form submission
+        convertForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (files.length === 0 || !currentFile) {
+                alert('Please select at least one JPG file to convert.');
+                return;
+            }
+            
+            // Show loading overlay
+            loadingOverlay.style.display = 'flex';
+            loadingMessage.textContent = 'Converting JPG to PNG...';
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('files', currentFile);
+            
+            // Submit for conversion
+            fetch('/api/jpg-to-png/convert/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Conversion failed');
+                }
+                
+                // Get filename from the response headers
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = currentFile.name.replace(/\.(jpg|jpeg)$/i, '.png');
+                
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                
+                convertedFileName = filename;
+                
+                // Get content type
+                const contentType = response.headers.get('Content-Type');
+                
+                return response.blob().then(blob => ({
+                    blob: blob,
+                    filename: filename,
+                    contentType: contentType
+                }));
+            })
+            .then(data => {
+                // Save converted blob
+                convertedBlob = data.blob;
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+                
+                // Hide dropzone and convert button
+                dropzone.style.display = 'none';
+                convertButton.style.display = 'none';
+                
+                // Show result
+                resultContainer.style.display = 'block';
+                
+                // Set result details
+                resultFileName.textContent = data.filename;
+                resultFileSize.textContent = formatFileSize(data.blob.size);
+                
+                // Create URL for the converted image
+                convertedImageUrl = URL.createObjectURL(data.blob);
+                
+                // Size difference details
+                const originalSize = currentFile.size;
+                const convertedSize = data.blob.size;
+                const percentChange = calculateSizeDifference(originalSize, convertedSize);
+                
+                if (percentChange > 0) {
+                    conversionDetails.innerHTML = `
+                        <span class="quality-badge">Lossless Quality</span>
+                        <span class="text-muted ms-2">File size increased by ${percentChange}% for better quality</span>
+                    `;
+                } else {
+                    conversionDetails.innerHTML = `
+                        <span class="quality-badge">Lossless Quality</span>
+                        <span class="text-muted ms-2">File size reduced by ${Math.abs(percentChange)}%</span>
+                    `;
+                }
+                
+                // Create comparison view
+                createComparisonView(originalImageUrl, convertedImageUrl, originalSize, convertedSize);
+                
+                // Hide file list and preview
+                filesContainer.classList.add('d-none');
+                previewContainer.classList.add('d-none');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during conversion. Please try again.');
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

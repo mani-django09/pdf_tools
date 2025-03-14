@@ -1,0 +1,1200 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF to PNG Converter | Convert PDF to PNG Online Free | ilovepdf.link{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .dropzone {
+        border: 2px dashed #0d6efd;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    
+    .dropzone.dragover {
+        background-color: #e9ecef;
+        border-color: #0b5ed7;
+    }
+    
+    .file-item {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .file-info {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
+    
+    .file-icon {
+        margin-right: 15px;
+        color: #0d6efd;
+    }
+    
+    .progress {
+        height: 5px;
+        margin-top: 5px;
+        width: 100%;
+    }
+    
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .preview-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    .preview-image {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .preview-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255,255,255,0.8);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    
+    .result-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+        display: none;
+    }
+    
+    .result-preview {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .result-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .file-details {
+        margin-top: 10px;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,255,255,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        display: none;
+    }
+    
+    .loading-content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .option-container {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .option-title {
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    
+    .pdf-preview {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    
+    .pdf-thumbnail-container {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 10px 0;
+        margin-bottom: 15px;
+    }
+    
+    .pdf-thumbnail {
+        min-width: 100px;
+        height: 130px;
+        object-fit: cover;
+        border: 2px solid #dee2e6;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .pdf-thumbnail.active {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+    }
+    
+    .page-info {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .pages-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(13, 110, 253, 0.9);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+    }
+    
+    .multi-result-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    
+    .preview-thumbnail {
+        position: relative;
+        width: 150px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .preview-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    .preview-thumbnail .page-number {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        text-align: center;
+        padding: 3px 0;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="tool-header py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="mb-3">PDF to PNG Converter</h1>
+                <p class="lead mb-4">Convert PDF to PNG online with ilovepdf.link's free PDF to PNG converter tool. Turn PDF pages into high-quality PNG images instantly.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="converter py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="convertForm" enctype="multipart/form-data">
+                            <div id="dropzone" class="dropzone mb-4">
+                                <div class="dropzone-content">
+                                    <i class="fas fa-file-pdf fa-3x mb-3 text-primary"></i>
+                                    <h4>Drag & Drop PDF file here</h4>
+                                    <p class="mb-2">Convert PDF to PNG instantly with ilovepdf.link's free converter</p>
+                                    <p>or</p>
+                                    <button type="button" id="browseButton" class="btn btn-primary">
+                                        <i class="fas fa-file-pdf me-2"></i> Browse PDF Files
+                                    </button>
+                                    <input type="file" id="fileInput" accept="application/pdf" class="d-none">
+                                </div>
+                            </div>
+                            
+                            <div id="fileInfo" class="file-item mb-4 d-none">
+                                <div class="file-info">
+                                    <i class="fas fa-file-pdf fa-2x file-icon"></i>
+                                    <div>
+                                        <div id="fileName" class="fw-bold"></div>
+                                        <div id="fileSize" class="text-muted small"></div>
+                                        <div id="pageCount" class="text-muted small"></div>
+                                    </div>
+                                </div>
+                                <div class="actions">
+                                    <button type="button" id="removeFileButton" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="pdfPreviewContainer" class="preview-container mb-4 d-none">
+                                <div class="position-relative">
+                                    <canvas id="pdfPreview" class="pdf-preview"></canvas>
+                                    <div id="pagesBadge" class="pages-badge">Page 1 of 1</div>
+                                </div>
+                                <div id="previewLoading" class="preview-loading">
+                                    <div class="spinner-border text-primary mb-2" role="status">
+                                        <span class="visually-hidden">Loading preview...</span>
+                                    </div>
+                                    <p class="mb-0">Loading preview...</p>
+                                </div>
+                            </div>
+                            
+                            <div id="pdfThumbnailsContainer" class="pdf-thumbnail-container d-none">
+                                <!-- Thumbnails will be added here dynamically -->
+                            </div>
+                            
+                            <div id="optionsContainer" class="option-container mb-4 d-none">
+                                <h5 class="option-title">Conversion Options</h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="dpiSelect" class="form-label">Image Quality (DPI)</label>
+                                        <select id="dpiSelect" class="form-select">
+                                            <option value="150">150 DPI (Low quality, small file)</option>
+                                            <option value="300" selected>300 DPI (Medium quality, balanced)</option>
+                                            <option value="600">600 DPI (High quality, large file)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="pageRangeSelect" class="form-label">Pages to Convert</label>
+                                        <select id="pageRangeSelect" class="form-select">
+                                            <option value="all" selected>All Pages</option>
+                                            <option value="current">Current Page Only</option>
+                                            <option value="custom">Custom Range</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="customRangeContainer" class="row d-none">
+                                    <div class="col-12 mb-3">
+                                        <label for="customRange" class="form-label">Custom Page Range</label>
+                                        <input type="text" id="customRange" class="form-control" placeholder="e.g., 1-3, 5, 7-9">
+                                        <div class="form-text">Enter page numbers or ranges separated by commas (e.g., 1-3, 5, 7-9)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" id="convertButton" class="btn btn-primary btn-lg" disabled>
+                                    <i class="fas fa-exchange-alt me-2"></i> Convert PDF to PNG
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Conversion Result -->
+                        <div id="resultContainer" class="result-container">
+                            <h4 class="mb-4">Conversion Completed</h4>
+                            
+                            <div id="singleResultPreview" class="d-none">
+                                <img id="resultPreview" class="result-preview" src="" alt="Converted PNG">
+                            </div>
+                            
+                            <div id="multiResultPreview" class="multi-result-preview d-none">
+                                <!-- Multiple page previews will be added here -->
+                            </div>
+                            
+                            <div class="file-details mb-3">
+                                <p id="resultFileName" class="mb-1 fw-bold"></p>
+                                <p id="resultFileSize" class="text-muted mb-1"></p>
+                                <p id="resultPageCount" class="text-muted"></p>
+                            </div>
+                            
+                            <div class="result-actions">
+                                <button id="downloadButton" class="btn btn-success">
+                                    <i class="fas fa-download me-2"></i> Download
+                                </button>
+                                <button id="newConversionButton" class="btn btn-outline-primary">
+                                    <i class="fas fa-redo me-2"></i> New Conversion
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Global Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 id="loadingMessage">Converting PDF to PNG...</h5>
+        <p class="text-muted">This may take a moment for multi-page documents</p>
+    </div>
+</div>
+
+<section class="tool-info py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3>About PDF to PNG Conversion</h3>
+                <p><strong>Why convert PDF to PNG?</strong> PDF to PNG conversion allows you to extract high-quality images from your PDF documents. Using ilovepdf.link's free PDF to PNG converter, you can transform PDF pages into PNG images that maintain the original quality and are compatible with all image editing software.</p>
+                <p>PNG (Portable Network Graphics) is a raster graphics file format that supports lossless data compression. Unlike JPEGs, PNG images support transparency and are ideal for graphics with sharp edges, text, and logos. Converting PDF to PNG is perfect for extracting graphics, diagrams, or charts from PDF files for use in presentations, websites, or social media.</p>
+                <h4 class="mt-4">Benefits of Converting PDF to PNG</h4>
+                <ul>
+                    <li><strong>Easy Sharing:</strong> PNG files are universally supported and easier to share than PDF documents.</li>
+                    <li><strong>Editing Capabilities:</strong> Convert PDF pages to PNGs to edit them in image editing software like Photoshop.</li>
+                    <li><strong>Web Optimization:</strong> PNG images can be used directly on websites, social media, and other online platforms.</li>
+                    <li><strong>Transparency Support:</strong> PNG format preserves any transparency in your PDF document.</li>
+                    <li><strong>No Quality Loss:</strong> Our PDF to PNG converter maintains the visual quality of your original PDF documents.</li>
+                </ul>
+                <p>ilovepdf.link's free online PDF to PNG converter uses advanced algorithms to ensure the highest quality conversion while maintaining all visual elements from your original PDF file.</p>
+            </div>
+            <div class="col-lg-6">
+                <h3>How to Use Our Free PDF to PNG Converter</h3>
+                <ol>
+                    <li><strong>Upload Your PDF File:</strong> Drag and drop your PDF into the upload area or click "Browse PDF Files" to select from your device.</li>
+                    <li><strong>Preview Your PDF:</strong> Our tool shows you a preview of your PDF pages so you know exactly what you're converting.</li>
+                    <li><strong>Select Conversion Options:</strong> Choose the image quality (DPI) and specify which pages you want to convert.</li>
+                    <li><strong>Convert PDF to PNG:</strong> Click the "Convert PDF to PNG" button to start the conversion process.</li>
+                    <li><strong>Download Your PNG Images:</strong> Download individual PNG images or a ZIP file containing all converted pages.</li>
+                </ol>
+                <p>ilovepdf.link's PDF to PNG converter handles both single-page and multi-page PDF files. For multi-page PDFs, you can convert specific pages or the entire document at once. Each page of your PDF will be converted to a separate PNG image.</p>
+                <h4 class="mt-4">Technical Specifications</h4>
+                <ul>
+                    <li>Maximum file size: 50MB per PDF file</li>
+                    <li>Supported quality settings: 150 DPI (web), 300 DPI (print), and 600 DPI (high-detail)</li>
+                    <li>Page selection: Convert all pages or specific page ranges</li>
+                    <li>Output format: High-quality PNG images</li>
+                    <li>Processing: Fast cloud-based conversion</li>
+                    <li>Security: Files are automatically deleted after conversion</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                        <h4>100% Secure PDF to PNG Conversion</h4>
+                        <p>At ilovepdf.link, your privacy is our priority. Your PDF files are processed securely and deleted from our servers automatically after conversion. We never share or store your documents.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tachometer-alt fa-3x text-primary mb-3"></i>
+                        <h4>Fast Online PDF to PNG Conversion</h4>
+                        <p>Our advanced PDF to PNG converter processes your files quickly, saving you time. Even large, multi-page PDFs are converted to high-quality PNG images in seconds.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-gem fa-3x text-primary mb-3"></i>
+                        <h4>High-Quality PNG Output</h4>
+                        <p>ilovepdf.link's PDF to PNG converter maintains the highest possible quality during conversion. Your PNG images will preserve all details, colors, and elements from your original PDF.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Frequently Asked Questions About PDF to PNG Conversion</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                What is the difference between converting PDF to PNG vs. JPG?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>When choosing whether to convert your PDF to PNG or JPG (JPEG), consider these key differences:</p>
+                                <ul>
+                                    <li><strong>Quality and Compression:</strong> PNG uses lossless compression, preserving all details and quality from your PDF. JPG uses lossy compression, which reduces file size but may sacrifice some image quality.</li>
+                                    <li><strong>Transparency:</strong> PNG supports transparency, so if your PDF contains transparent elements, PNG will preserve them. JPG does not support transparency and will replace transparent areas with a background color (usually white).</li>
+                                    <li><strong>Text and Graphics:</strong> PNG is better for documents with text, sharp edges, or graphics because it keeps edges crisp. JPG is better suited for photographs and images with many colors and gradients.</li>
+                                    <li><strong>File Size:</strong> PNG files are typically larger than JPG files, especially for complex documents. If file size is your primary concern, JPG might be preferable.</li>
+                                </ul>
+                                <p>ilovepdf.link offers both PDF to PNG and PDF to JPG conversion tools, so you can choose the format that best suits your needs. For documents with text, diagrams, or graphics requiring high quality, PNG is generally the better choice.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                What DPI should I use when converting PDF to PNG?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>The DPI (Dots Per Inch) setting determines the resolution and quality of your PNG images. Here's a guide to choosing the right DPI:</p>
+                                <ul>
+                                    <li><strong>150 DPI:</strong> Good for web usage, social media, and screen viewing. This creates smaller files that load quickly online but may not have sufficient detail for printing.</li>
+                                    <li><strong>300 DPI:</strong> The standard for most purposes, offering a good balance between quality and file size. Suitable for printing documents at normal sizes and for most professional uses.</li>
+                                    <li><strong>600 DPI:</strong> High resolution for detailed graphics, professional printing, or when you need to zoom in on details. Creates larger files but preserves maximum quality from your PDF.</li>
+                                </ul>
+                                <p>Our PDF to PNG converter defaults to 300 DPI, which is sufficient for most purposes. If you're unsure which DPI to choose, consider how you'll use the PNG images:</p>
+                                <ul>
+                                    <li>For website images or email: 150 DPI is usually sufficient</li>
+                                    <li>For standard printing or professional documents: 300 DPI is recommended</li>
+                                    <li>For detailed graphics, professional printing, or future editing: 600 DPI provides the highest quality</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                How do I convert specific pages of a multi-page PDF to PNG?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>ilovepdf.link's free PDF to PNG converter makes it easy to convert specific pages from multi-page PDF documents:</p>
+                                <ol>
+                                    <li>Upload your multi-page PDF file to our converter</li>
+                                    <li>Once loaded, you'll see thumbnail previews of all pages in your document</li>
+                                    <li>In the "Pages to Convert" dropdown, select "Current Page Only" to convert just the page you're viewing, or select "Custom Range" to specify page numbers</li>
+                                    <li>If you chose "Custom Range," enter the pages you want to convert in the format:
+                                        <ul>
+                                            <li>Individual pages: "1, 3, 5"</li>
+                                            <li>Page ranges: "1-5, 8-10"</li>
+                                            <li>Combination: "1, 3-5, 8, 10-12"</li>
+                                        </ul>
+                                    </li>
+                                    <li>Click "Convert PDF to PNG" to process only your selected pages</li>
+                                </ol>
+                                <p>After conversion, you'll receive a ZIP file containing PNG images of only the pages you specified. This feature is particularly useful for extracting specific diagrams, charts, or content from large PDF documents without having to convert the entire file.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Is the online PDF to PNG converter free to use?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Yes, ilovepdf.link's PDF to PNG converter is completely free to use with the following features and limitations:</p>
+                                <h5 class="mt-3">Free Features:</h5>
+                                <ul>
+                                    <li>Convert PDF files up to 50MB</li>
+                                    <li>Convert single or multi-page PDF documents</li>
+                                    <li>Choose from different quality settings (150, 300, or 600 DPI)</li>
+                                    <li>Select specific pages to convert</li>
+                                    <li>Download individual PNG images or ZIP archives</li>
+                                    <li>No watermarks on converted images</li>
+                                    <li>No account registration required</li>
+                                </ul>
+                                <p>Unlike many other online tools, we don't add watermarks to your converted PNG images, even with the free version. For users with more advanced needs or larger files, we also offer premium subscription plans with additional features like higher file size limits, batch processing, and API access.</p>
+                                <p>We believe in providing high-quality tools that are accessible to everyone, which is why our core PDF to PNG conversion functionality remains free and unlimited.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                Will my PDF to PNG conversion maintain text sharpness?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Yes, our PDF to PNG converter is designed to maintain text sharpness and clarity. Here's how we ensure high-quality text in your converted PNG images:</p>
+                                <ul>
+                                    <li><strong>High DPI Settings:</strong> Our default 300 DPI setting is specifically chosen to preserve text sharpness. For even crisper text, you can select the 600 DPI option.</li>
+                                    <li><strong>Lossless PNG Format:</strong> PNG uses lossless compression, which preserves the exact pixels and ensures text edges remain sharp, unlike lossy formats like JPG.</li>
+                                    <li><strong>Advanced Rendering:</strong> We use high-quality rendering engines that properly interpret the vector text in PDF documents when converting to raster PNG images.</li>
+                                </ul>
+                                <p>For documents with a lot of text, we recommend the following best practices:</p>
+                                <ol>
+                                    <li>Choose 300 DPI or higher for text-heavy documents</li>
+                                    <li>Check the preview of your conversion to ensure text quality meets your needs</li>
+                                    <li>For extremely fine text or when maximum quality is essential, use the 600 DPI setting</li>
+                                </ol>
+                                <p>Remember that converting PDF text to PNG images means the text will no longer be selectable or searchable. If you need to edit the text content, consider using our PDF to Word converter instead.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSix">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                How secure is the online PDF to PNG conversion?
+                            </button>
+                        </h2>
+                        <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>At ilovepdf.link, we take your document security and privacy seriously. Here's how we protect your files during the PDF to PNG conversion process:</p>
+                                <ul>
+                                    <li><strong>Secure File Transfer:</strong> All file uploads and downloads use secure HTTPS connections with advanced encryption, ensuring your documents can't be intercepted.</li>
+                                    <li><strong>Temporary Storage:</strong> Your PDF files are only stored temporarily during the conversion process and are automatically deleted after processing.</li>
+                                    <li><strong>Automatic Deletion:</strong> All uploaded PDFs and converted PNGs are permanently removed from our servers within hours of the conversion, typically within 24 hours at most.</li>
+                                    <li><strong>No Content Access:</strong> Our system processes your files automatically. We do not view, analyze, or access the content of your PDF documents.</li>
+                                    <li><strong>No Registration Required:</strong> You can use our PDF to PNG converter without creating an account or providing personal information.</li>
+                                </ul>
+                                <p>Our commitment to security makes ilovepdf.link's free online PDF to PNG converter suitable for both personal and professional document conversion needs. However, for documents containing highly sensitive or confidential information, we recommend using offline conversion software.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="additional-info py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="text-center mb-5">Why Choose ilovepdf.link's Free PDF to PNG Converter</h2>
+                
+                <div class="mb-5">
+                    <h3>When to Convert PDF to PNG</h3>
+                    <p>Converting PDF to PNG with our free online tool is particularly useful in these scenarios:</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-crop text-primary me-2"></i> Image Extraction</h5>
+                                    <p>Extract diagrams, charts, graphics, or images from PDF documents as high-quality PNG files for use in presentations, social media, or other documents.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-pencil-alt text-primary me-2"></i> Image Editing</h5>
+                                    <p>Convert PDF pages to PNG to edit them in image editing software like Photoshop, GIMP, or other graphic design tools that don't directly support PDF editing.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-globe text-primary me-2"></i> Web Publishing</h5>
+                                    <p>Transform PDF content into web-friendly PNG images that can be easily embedded on websites, blogs, or online platforms without requiring PDF viewers.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-share-alt text-primary me-2"></i> Social Media Sharing</h5>
+                                    <p>Convert PDF pages to PNG images for easy sharing on social media platforms like Instagram, Twitter, or Facebook, which handle images better than PDF files.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <h3>Best Practices for PDF to PNG Conversion</h3>
+                    <p>To get the best results when using our free online PDF to PNG converter, follow these professional tips:</p>
+                    <ol class="mt-4">
+                        <li class="mb-3"><strong>Choose the right DPI:</strong> Select 300 DPI for most purposes, 150 DPI for web-only content, or 600 DPI for high-detail professional work.</li>
+                        <li class="mb-3"><strong>Convert only the pages you need:</strong> For multi-page PDFs, use the page selection feature to convert only specific pages rather than the entire document.</li>
+                        <li class="mb-3"><strong>Check the preview:</strong> Always review the preview to ensure the quality meets your expectations before completing the conversion.</li>
+                        <li class="mb-3"><strong>Consider file size needs:</strong> Remember that higher DPI settings create larger PNG files. Choose the appropriate quality based on your storage and sharing requirements.</li>
+                        <li class="mb-3"><strong>Use PNG for the right content:</strong> PNG is ideal for documents with text, graphics, and sharp edges. For photos, our PDF to JPG converter might be more appropriate.</li>
+                    </ol>
+                </div>
+                
+                <div class="alert alert-info mt-5" role="alert">
+                    <h4 class="alert-heading"><i class="fas fa-lightbulb me-2"></i> Pro Tip!</h4>
+                    <p>When extracting images from PDF documents, try using a higher DPI setting (600) and then resize the resulting PNG images as needed. This approach preserves more detail from the original PDF compared to starting with a lower DPI conversion.</p>
+                    <hr>
+                    <p class="mb-0">At ilovepdf.link, we provide all the tools you need for complete document management, including PDF to PNG conversion, PDF editing, compression, and more – all for free and without watermarks.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script>
+    // Set worker path for PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const browseButton = document.getElementById('browseButton');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const pageCount = document.getElementById('pageCount');
+        const removeFileButton = document.getElementById('removeFileButton');
+        const pdfPreviewContainer = document.getElementById('pdfPreviewContainer');
+        const pdfPreview = document.getElementById('pdfPreview');
+        const pagesBadge = document.getElementById('pagesBadge');
+        const previewLoading = document.getElementById('previewLoading');
+        const pdfThumbnailsContainer = document.getElementById('pdfThumbnailsContainer');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const dpiSelect = document.getElementById('dpiSelect');
+        const pageRangeSelect = document.getElementById('pageRangeSelect');
+        const customRangeContainer = document.getElementById('customRangeContainer');
+        const customRange = document.getElementById('customRange');
+        const convertButton = document.getElementById('convertButton');
+        const convertForm = document.getElementById('convertForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const singleResultPreview = document.getElementById('singleResultPreview');
+        const multiResultPreview = document.getElementById('multiResultPreview');
+        const resultPreview = document.getElementById('resultPreview');
+        const resultFileName = document.getElementById('resultFileName');
+        const resultFileSize = document.getElementById('resultFileSize');
+        const resultPageCount = document.getElementById('resultPageCount');
+        const downloadButton = document.getElementById('downloadButton');
+        const newConversionButton = document.getElementById('newConversionButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        // State variables
+        let pdfFile = null;
+        let pdfDocument = null;
+        let currentPage = 1;
+        let totalPages = 0;
+        let convertedFile = null;
+        let convertedFileName = '';
+        
+        // Handle browse button click
+        browseButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Handle drag and drop events
+        dropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+        });
+        
+        dropzone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+        });
+        
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle file processing
+        function handleFile(file) {
+            // Validate file type
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                alert('Please select a PDF file only.');
+                return;
+            }
+            
+            pdfFile = file;
+            
+            // Update file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.remove('d-none');
+            
+            // Show loading indicator
+            pdfPreviewContainer.classList.remove('d-none');
+            previewLoading.style.display = 'block';
+            
+            // Load and render PDF for preview
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                const typedArray = new Uint8Array(this.result);
+                
+                // Load PDF document
+                pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
+                    pdfDocument = pdf;
+                    totalPages = pdf.numPages;
+                    
+                    // Update page count info
+                    pageCount.textContent = `${totalPages} page${totalPages > 1 ? 's' : ''}`;
+                    pagesBadge.textContent = `Page 1 of ${totalPages}`;
+                    
+                    // Render first page
+                    renderPage(1);
+                    
+                    // Generate thumbnails for multi-page documents
+                    if (totalPages > 1) {
+                        generateThumbnails(pdf);
+                    }
+                    
+                    // Show options
+                    optionsContainer.classList.remove('d-none');
+                    
+                    // Enable convert button
+                    convertButton.disabled = false;
+                }).catch(function(error) {
+                    console.error('Error loading PDF:', error);
+                    alert('Failed to load PDF file. Please ensure it is a valid PDF document.');
+                    resetForm();
+                });
+            };
+            fileReader.readAsArrayBuffer(file);
+        }
+        
+        // Render PDF page
+        function renderPage(pageNumber) {
+            if (!pdfDocument) return;
+            
+            previewLoading.style.display = 'block';
+            
+            // Update current page
+            currentPage = pageNumber;
+            pagesBadge.textContent = `Page ${pageNumber} of ${totalPages}`;
+            
+            // Update thumbnail selection
+            const thumbnails = pdfThumbnailsContainer.querySelectorAll('.pdf-thumbnail');
+            thumbnails.forEach(thumb => {
+                const thumbPageNum = parseInt(thumb.dataset.page);
+                if (thumbPageNum === pageNumber) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+            
+            // Get the page
+            pdfDocument.getPage(pageNumber).then(function(page) {
+                // Determine scale to fit the canvas
+                const viewport = page.getViewport({scale: 1});
+                const canvas = pdfPreview;
+                const context = canvas.getContext('2d');
+                
+                // Set canvas dimensions
+                const containerWidth = pdfPreviewContainer.clientWidth - 20; // Account for padding
+                const scale = containerWidth / viewport.width;
+                const scaledViewport = page.getViewport({scale: scale});
+                
+                canvas.width = scaledViewport.width;
+                canvas.height = scaledViewport.height;
+                
+                // Render PDF page
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: scaledViewport
+                };
+                
+                page.render(renderContext).promise.then(function() {
+                    previewLoading.style.display = 'none';
+                });
+            });
+        }
+        
+        // Generate thumbnails for multi-page PDF
+        function generateThumbnails(pdf) {
+            pdfThumbnailsContainer.innerHTML = '';
+            pdfThumbnailsContainer.classList.remove('d-none');
+            
+            // Generate max 10 thumbnails to avoid performance issues
+            const pagesToShow = Math.min(totalPages, 10);
+            
+            for (let i = 1; i <= pagesToShow; i++) {
+                pdf.getPage(i).then(function(page) {
+                    const viewport = page.getViewport({scale: 1});
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    
+                    // Create a small thumbnail
+                    const scale = 100 / viewport.width;
+                    const scaledViewport = page.getViewport({scale: scale});
+                    
+                    canvas.width = scaledViewport.width;
+                    canvas.height = scaledViewport.height;
+                    
+                    // Create thumbnail container
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = 'pdf-thumbnail' + (i === 1 ? ' active' : '');
+                    thumbnail.dataset.page = i;
+                    thumbnail.appendChild(canvas);
+                    
+                    // Add page number label
+                    const pageLabel = document.createElement('div');
+                    pageLabel.className = 'page-info';
+                    pageLabel.textContent = `Page ${i}`;
+                    thumbnail.appendChild(pageLabel);
+                    
+                    // Add click event
+                    thumbnail.addEventListener('click', function() {
+                        renderPage(parseInt(this.dataset.page));
+                    });
+                    
+                    pdfThumbnailsContainer.appendChild(thumbnail);
+                    
+                    // Render thumbnail
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: scaledViewport
+                    };
+                    
+                    page.render(renderContext);
+                });
+            }
+            
+            // If there are more pages than shown, add an indicator
+            if (totalPages > pagesToShow) {
+                const moreIndicator = document.createElement('div');
+                moreIndicator.className = 'pdf-thumbnail more-indicator';
+                moreIndicator.innerHTML = `<div class="more-pages">+${totalPages - pagesToShow} more</div>`;
+                pdfThumbnailsContainer.appendChild(moreIndicator);
+            }
+        }
+        
+        // Handle page range selection
+        pageRangeSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customRangeContainer.classList.remove('d-none');
+            } else {
+                customRangeContainer.classList.add('d-none');
+            }
+        });
+        
+        // Handle remove file button
+        removeFileButton.addEventListener('click', function() {
+            resetForm();
+        });
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Reset form
+        function resetForm() {
+            pdfFile = null;
+            pdfDocument = null;
+            currentPage = 1;
+            totalPages = 0;
+            
+            fileInput.value = '';
+            fileInfo.classList.add('d-none');
+            pdfPreviewContainer.classList.add('d-none');
+            pdfThumbnailsContainer.classList.add('d-none');
+            optionsContainer.classList.add('d-none');
+            customRangeContainer.classList.add('d-none');
+            convertButton.disabled = true;
+            
+            // Reset page range select
+            pageRangeSelect.value = 'all';
+            customRange.value = '';
+        }
+        
+        // Handle new conversion button
+        newConversionButton.addEventListener('click', function() {
+            resultContainer.style.display = 'none';
+            dropzone.style.display = 'block';
+            convertButton.style.display = 'block';
+            
+            // Clear previous conversion
+            convertedFile = null;
+            convertedFileName = '';
+            singleResultPreview.classList.add('d-none');
+            multiResultPreview.classList.add('d-none');
+            multiResultPreview.innerHTML = '';
+            
+            resetForm();
+        });
+        
+        // Handle download button
+        downloadButton.addEventListener('click', function() {
+            if (!convertedFile) return;
+            
+            // Show loading spinner on the download button
+            const originalButtonText = downloadButton.innerHTML;
+            downloadButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Downloading...';
+            downloadButton.disabled = true;
+            
+            // Short timeout to ensure the loading state is visible
+            setTimeout(() => {
+                const downloadUrl = URL.createObjectURL(convertedFile);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = convertedFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
+                
+                // Restore button after download starts
+                setTimeout(() => {
+                    downloadButton.innerHTML = originalButtonText;
+                    downloadButton.disabled = false;
+                }, 1000);
+            }, 500);
+        });
+        
+        // Parse page ranges
+        function parsePageRanges(rangeString, totalPages) {
+            const pages = new Set();
+            
+            if (!rangeString || rangeString.trim() === '') {
+                // Default to all pages
+                for (let i = 1; i <= totalPages; i++) {
+                    pages.add(i);
+                }
+                return Array.from(pages);
+            }
+            
+            // Split by commas
+            const parts = rangeString.split(',');
+            
+            parts.forEach(part => {
+                part = part.trim();
+                
+                if (part.includes('-')) {
+                    // Handle range (e.g., 1-5)
+                    const [start, end] = part.split('-').map(n => parseInt(n.trim()));
+                    
+                    if (!isNaN(start) && !isNaN(end)) {
+                        const validStart = Math.max(1, Math.min(start, totalPages));
+                        const validEnd = Math.min(totalPages, Math.max(end, 1));
+                        
+                        for (let i = validStart; i <= validEnd; i++) {
+                            pages.add(i);
+                        }
+                    }
+                } else {
+                    // Handle single page
+                    const pageNum = parseInt(part);
+                    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+                        pages.add(pageNum);
+                    }
+                }
+            });
+            
+            return Array.from(pages).sort((a, b) => a - b);
+        }
+        
+        // Handle form submission
+        convertForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!pdfFile || !pdfDocument) {
+                alert('Please select a PDF file to convert.');
+                return;
+            }
+            
+            // Determine which pages to convert
+            let pagesToConvert = [];
+            const pageRangeType = pageRangeSelect.value;
+            
+            if (pageRangeType === 'all') {
+                // Convert all pages
+                for (let i = 1; i <= totalPages; i++) {
+                    pagesToConvert.push(i);
+                }
+            } else if (pageRangeType === 'current') {
+                // Convert only current page
+                pagesToConvert.push(currentPage);
+            } else if (pageRangeType === 'custom') {
+                // Convert custom page range
+                pagesToConvert = parsePageRanges(customRange.value, totalPages);
+                
+                if (pagesToConvert.length === 0) {
+                    alert('Please enter a valid page range.');
+                    return;
+                }
+            }
+            
+            // Get DPI setting
+            const dpi = dpiSelect.value;
+            
+            // Show loading overlay
+            loadingOverlay.style.display = 'flex';
+            loadingMessage.textContent = `Converting PDF to PNG (${pagesToConvert.length} page${pagesToConvert.length > 1 ? 's' : ''})...`;
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('file', pdfFile);
+            formData.append('dpi', dpi);
+            formData.append('pages', JSON.stringify(pagesToConvert));
+            
+            // Submit for conversion
+            fetch('/api/pdf-to-png/convert/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Conversion failed');
+                }
+                
+                // Get filename from the response headers
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'converted.png';
+                
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                
+                convertedFileName = filename;
+                
+                // Get content type
+                const contentType = response.headers.get('Content-Type');
+                
+                return response.blob().then(blob => ({
+                    blob: blob,
+                    filename: filename,
+                    contentType: contentType,
+                    pageCount: pagesToConvert.length
+                }));
+            })
+            .then(data => {
+                // Save converted blob
+                convertedFile = data.blob;
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+                
+                // Hide dropzone and convert button
+                dropzone.style.display = 'none';
+                convertButton.style.display = 'none';
+                
+                // Show result
+                resultContainer.style.display = 'block';
+                
+                // Set result details
+                resultFileName.textContent = data.filename;
+                resultFileSize.textContent = formatFileSize(data.blob.size);
+                resultPageCount.textContent = `${data.pageCount} page${data.pageCount > 1 ? 's' : ''} converted`;
+                
+                const blobUrl = URL.createObjectURL(data.blob);
+                
+                // Show different preview based on content type and number of pages
+                if (data.contentType === 'image/png' && data.pageCount === 1) {
+                    // Single PNG file
+                    singleResultPreview.classList.remove('d-none');
+                    multiResultPreview.classList.add('d-none');
+                    resultPreview.src = blobUrl;
+                } else if (data.contentType === 'application/zip') {
+                    // Multiple PNGs in ZIP
+                    singleResultPreview.classList.add('d-none');
+                    multiResultPreview.classList.remove('d-none');
+                    
+                    // Show placeholder thumbnails for multiple pages
+                    multiResultPreview.innerHTML = '';
+                    for (let i = 0; i < Math.min(pagesToConvert.length, 8); i++) {
+                        const thumbContainer = document.createElement('div');
+                        thumbContainer.className = 'preview-thumbnail';
+                        
+                        const pageNumber = pagesToConvert[i];
+                        const thumbnailImg = document.createElement('img');
+                        thumbnailImg.src = `/static/img/pdf-thumbnail-placeholder.png`; // Use a placeholder image
+                        thumbnailImg.alt = `Page ${pageNumber}`;
+                        
+                        const pageNumberLabel = document.createElement('div');
+                        pageNumberLabel.className = 'page-number';
+                        pageNumberLabel.textContent = `Page ${pageNumber}`;
+                        
+                        thumbContainer.appendChild(thumbnailImg);
+                        thumbContainer.appendChild(pageNumberLabel);
+                        multiResultPreview.appendChild(thumbContainer);
+                    }
+                    
+                    // If there are more pages than shown, add indicator
+                    if (pagesToConvert.length > 8) {
+                        const moreIndicator = document.createElement('div');
+                        moreIndicator.className = 'preview-thumbnail more-indicator';
+                        moreIndicator.innerHTML = `<div class="more-pages">+${pagesToConvert.length - 8} more</div>`;
+                        multiResultPreview.appendChild(moreIndicator);
+                    }
+                }
+                
+                // Hide options and preview
+                pdfPreviewContainer.classList.add('d-none');
+                pdfThumbnailsContainer.classList.add('d-none');
+                optionsContainer.classList.add('d-none');
+                fileInfo.classList.add('d-none');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during conversion. Please try again.');
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

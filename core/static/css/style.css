@@ -1,0 +1,91 @@
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* Hero Section */
+.hero {
+    background-color: #f8f9fa;
+    padding: 80px 0;
+    margin-bottom: 30px;
+}
+
+.hero-actions {
+    margin-top: 30px;
+}
+
+/* Tool Cards */
+.tool-card {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tool-icon {
+    color: #0d6efd;
+    margin-bottom: 15px;
+}
+
+/* Features Section */
+.feature-icon {
+    color: #0d6efd;
+    margin-bottom: 15px;
+}
+
+/* How It Works Section */
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid #e9ecef;
+}
+
+.social-icons a {
+    display: inline-block;
+    margin-right: 10px;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.social-icons a:hover {
+    color: #0d6efd;
+}
+
+/* Main Button Styling */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* CTA Section */
+.cta {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}

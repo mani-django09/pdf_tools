@@ -1,0 +1,485 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Primary Meta Tags -->
+        <meta name="description" content="Free online PDF tools at ilovepdf.link. Convert PDF to JPG, JPG to PDF, PDF to Word, and more. No registration required, 100% secure and easy to use.">
+        <meta name="keywords" content="pdf converter, pdf to jpg, jpg to pdf, pdf to word, word to pdf, online pdf tools, pdf editor, free pdf converter">
+        <meta name="author" content="ilovepdf.link">
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://ilovepdf.link/">
+        <meta property="og:title" content="Free Online PDF Tools | Convert, Edit, Compress PDFs - ilovepdf.link">
+        <meta property="og:description" content="Convert PDF to JPG, JPG to PDF, and more with our free online PDF tools. No registration required, 100% secure.">
+        <meta property="og:image" content="{% static 'images/og-image.jpg' %}">
+        <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ilovepdf.link/">
+    <meta property="twitter:title" content="Free Online PDF Tools | Convert, Edit, Compress PDFs - ilovepdf.link">
+    <meta property="twitter:description" content="Convert PDF to JPG, JPG to PDF, and more with our free online PDF tools. No registration required, 100% secure.">
+    <meta property="twitter:image" content="{% static 'images/twitter-card.jpg' %}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ilovepdf.link{% if request.path != '/' %}{{ request.path }}{% endif %}">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/favicon/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'images/favicon/safari-pinned-tab.svg' %}" color="#0d6efd">
+    <meta name="msapplication-TileColor" content="#0d6efd">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ilovepdf.link",
+        "url": "https://ilovepdf.link/",
+        "description": "Free online PDF tools for converting, editing, and managing PDF files.",
+        "applicationCategory": "Utility",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "PDF to JPG conversion",
+            "JPG to PDF conversion",
+            "PDF to Word conversion", 
+            "Word to PDF conversion",
+            "PDF to PNG conversion",
+            "PNG to PDF conversion",
+            "WebP to PNG conversion",
+            "PNG to WebP conversion"
+        ],
+        "inLanguage": "en",
+        "copyrightYear": "2025",
+        "copyrightHolder": {
+            "@type": "Organization",
+            "name": "ilovepdf.link"
+        }
+    }
+    </script>
+    
+    <!-- Organization Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "ilovepdf.link",
+        "url": "https://ilovepdf.link/",
+        "logo": "https://ilovepdf.link{% static 'images/logo.png' %}",
+        "sameAs": [
+            "https://twitter.com/ilovepdflink",
+            "https://www.facebook.com/ilovepdflink",
+            "https://www.linkedin.com/company/ilovepdflink"
+        ]
+    }
+    </script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Google Analytics (replace with your actual tracking ID) -->
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KNJB0FR8BD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KNJB0FR8BD');
+</script>
+</head>    
+</head>
+<body>
+ <!-- Updated Header/Navbar -->
+ <!-- Header HTML for Base Template -->
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <!-- Logo - Closely matching the screenshot -->
+            <a href="/" class="logo">
+                <span class="logo-i">I</span>
+                <span class="logo-heart">
+                    <svg width="40" height="40" viewBox="0 0 40 40">
+                        <path d="M20,10 C17,-5 0,10 0,20 C0,30 20,40 20,40 C20,40 40,30 40,20 C40,10 23,-5 20,10 Z" fill="#e74c3c" />
+                    </svg>
+                </span>
+                <span class="logo-pdf">PDF</span>
+            </a>
+            
+            <!-- Navigation - Only the tools from the screenshot -->
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="{% url 'word_to_pdf' %}">Word to PDF</a></li>
+                    <li class="nav-item"><a href="{% url 'webp_to_png' %}">WebP to PNG</a></li>
+                    <li class="nav-item"><a href="{% url 'png_to_webp' %}">PNG to WebP</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="dropdown-toggle">CONVERT PDF <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="/pdf-to-jpg/">PDF to JPG</a>
+                            <a href="/pdf-to-png/">PDF to PNG</a>
+                            <a href="/pdf-to-word/">PDF to Word</a>
+                            <a href="/jpg-to-pdf/">JPG to PDF</a>
+                            <a href="/png-to-pdf/">PNG to PDF</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="dropdown-toggle">ALL PDF TOOLS <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="/pdf-to-jpg/">PDF to JPG</a>
+                            <a href="/pdf-to-png/">PDF to PNG</a>
+                            <a href="/pdf-to-word/">PDF to Word</a>
+                            <a href="/jpg-to-pdf/">JPG to PDF</a>
+                            <a href="/png-to-pdf/">PNG to PDF</a>
+                            <a href="/jpg-to-png/">JPG to PNG</a>
+                            <a href="/png-to-jpg/">PNG to JPG</a>
+                            <a href="/webp-to-png/">WebP to PNG</a>
+                            <a href="/png-to-webp/">PNG to WebP</a>
+                            <a href="/word-to-pdf/">Word to PDF</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<!-- CSS styles for the header - Improved to match screenshot more closely -->
+<style>
+/* Base styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Header styles */
+.site-header {
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo styling to match screenshot */
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-i {
+    font-size: 40px;
+    font-weight: 900;
+    color: #222222;
+    line-height: 1;
+    font-family: Arial, sans-serif;
+}
+
+.logo-heart {
+    margin: 0 4px;
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+.logo-pdf {
+    font-size: 40px;
+    font-weight: 900;
+    color: #222222;
+    line-height: 1;
+    font-family: Arial, sans-serif;
+}
+
+/* Navigation styling to match screenshot */
+.main-nav {
+    margin-left: auto;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.nav-item {
+    margin: 0 15px;
+    position: relative;
+}
+
+.nav-item:last-child {
+    margin-right: 0;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: #444444;
+    font-weight: 600;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.nav-item a:hover {
+    color: #e74c3c;
+}
+
+/* Dropdown styles */
+.dropdown-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-toggle i {
+    margin-left: 5px;
+    font-size: 12px;
+    color: #777;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    min-width: 200px;
+    display: none;
+    padding: 10px 0;
+    margin-top: 10px;
+    z-index: 100;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px 15px;
+    font-weight: 400;
+    font-size: 14px;
+    color: #444;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f5f5f5;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+    .header-content {
+        flex-direction: column;
+    }
+    
+    .main-nav {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 15px;
+    }
+    
+    .nav-list {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        box-shadow: none;
+        border: 1px solid #eee;
+        margin-top: 10px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-list {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .nav-item {
+        margin: 5px 0;
+        width: 100%;
+    }
+    
+    .dropdown-toggle {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .dropdown-menu {
+        width: 100%;
+    }
+}
+</style>
+
+<!-- JavaScript for mobile dropdown toggle -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 768) {
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dropdownMenu = this.nextElementSibling;
+                
+                // Close all other dropdowns
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    if (menu !== dropdownMenu) {
+                        menu.style.display = 'none';
+                    }
+                });
+                
+                // Toggle current dropdown
+                if (dropdownMenu.style.display === 'block') {
+                    dropdownMenu.style.display = 'none';
+                } else {
+                    dropdownMenu.style.display = 'block';
+                }
+            });
+        });
+    }
+});
+</script>
+<!-- Updated Meta Tags (for head section) -->
+<!-- Primary Meta Tags -->
+<meta name="description" content="Free online PDF and image conversion tools at ilovepdf.link. Convert between PDF, JPG, PNG, WebP and Word formats instantly. No registration required, 100% secure, and easy to use.">
+<meta name="keywords" content="pdf converter, pdf to jpg, jpg to pdf, pdf to png, png to pdf, pdf to word, word to pdf, webp to png, png to webp, online pdf tools, free pdf conversion, image converter">
+<meta name="author" content="ilovepdf.link">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ilovepdf.link/">
+<meta property="og:title" content="ilovepdf.link | Free Online PDF & Image Conversion Tools">
+<meta property="og:description" content="Convert between PDF, JPG, PNG, WebP and Word formats with our free online tools. No registration, no limits, and 100% secure processing.">
+<meta property="og:image" content="{% static 'images/og-image.jpg' %}">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://ilovepdf.link/">
+<meta property="twitter:title" content="ilovepdf.link | Free Online PDF & Image Conversion Tools">
+<meta property="twitter:description" content="Convert between PDF, JPG, PNG, WebP and Word formats with our free online tools. No registration, no limits, and 100% secure processing.">
+<meta property="twitter:image" content="{% static 'images/twitter-card.jpg' %}">
+
+<!-- Title Tag -->
+<title>{% block title %}ilovepdf.link | Free Online PDF & Image Conversion Tools{% endblock %}</title>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-dark text-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <i class="fas fa-file-pdf text-primary me-2" style="font-size: 1.6rem;"></i>
+                        <span class="h4 fw-bold">ilovepdf.link</span>
+                    </div>
+                    <p class="mb-4">Your all-in-one solution for PDF manipulation. Edit, convert, and manage your PDF files with ease.</p>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="fw-bold mb-3 text-primary">Tools</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'pdf_to_png' %}" class="text-light text-decoration-none">PDF to PNG</a></li>
+                        <li class="mb-2"><a href="{% url 'png_to_pdf' %}" class="text-light text-decoration-none">PNG to PDF</a></li>
+                        <li class="mb-2"><a href="{% url 'webp_to_png' %}" class="text-light text-decoration-none">WebP to PNG</a></li>
+                        <li class="mb-2"><a href="{% url 'word_to_pdf' %}" class="text-light text-decoration-none">Word to PDF</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="fw-bold mb-3 text-primary">Company</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'about_us' %}" class="text-light text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="{% url 'contact' %}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="fw-bold mb-3 text-primary">Support</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'privacy_policy' %}" class="text-light text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="{% url 'terms_of_service' %}" class="text-light text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="fw-bold mb-3 text-primary">Connect</h5>
+                    <div class="social-icons d-flex gap-2">
+                        <!-- Facebook -->
+                        <a href="https://facebook.com/ilovepdflink" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle p-1" aria-label="Facebook" title="Follow us on Facebook">
+                            <i class="fab fa-facebook-f" style="font-size: 0.9rem; width: 16px; height: 16px;"></i>
+                        </a>
+                        <!-- Twitter -->
+                        <a href="https://twitter.com/ilovepdflink" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle p-1" aria-label="Twitter" title="Follow us on Twitter">
+                            <i class="fab fa-twitter" style="font-size: 0.9rem; width: 16px; height: 16px;"></i>
+                        </a>
+                        <!-- Instagram -->
+                        <a href="https://instagram.com/ilovepdflink" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle p-1" aria-label="Instagram" title="Follow us on Instagram">
+                            <i class="fab fa-instagram" style="font-size: 0.9rem; width: 16px; height: 16px;"></i>
+                        </a>
+                        <!-- LinkedIn -->
+                        <a href="https://linkedin.com/company/ilovepdflink" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-circle p-1" aria-label="LinkedIn" title="Follow us on LinkedIn">
+                            <i class="fab fa-linkedin-in" style="font-size: 0.9rem; width: 16px; height: 16px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4 pt-3 border-top border-secondary">
+                <div class="col-md-6">
+                    <p class="mb-0 small">© 2025 ilovepdf.link. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div>
+                        <i class="fas fa-shield-alt text-primary me-1" style="font-size: 0.9rem;"></i>
+                        <span class="small">Secure connection. Your files are safe with us.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

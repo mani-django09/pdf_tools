@@ -1,0 +1,754 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ilovepdf.link - Free Online PDF & Image Conversion Tools{% endblock %}
+
+{% block content %}
+<!-- Compact & Outstanding Hero Section -->
+<!-- Compact & Outstanding Hero Section -->
+<section class="hero position-relative overflow-hidden" style="background-color: #1e3a8a; padding: 70px 0 100px;">
+    <!-- Stylish background dots pattern -->
+    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('{% static 'images/dots-pattern.png' %}'), radial-gradient(circle at 30% 40%, rgba(59, 130, 246, 0.3) 0%, rgba(30, 58, 138, 0) 50%); background-size: 40px, cover; z-index: 0;"></div>
+    
+    <div class="container position-relative" style="z-index: 1;">
+        <div class="row align-items-center">
+            <!-- Left side content -->
+            <div class="col-lg-6 text-white">
+                <h1 class="display-4 fw-bold mb-2">Transform Your Files</h1>
+                <h1 class="display-4 fw-bold mb-4">with <span style="color: #f97316;">ilovepdf</span><span style="color: #f8fafc;">.link</span></h1>
+                
+                <p class="lead mb-5">Convert PDFs and images instantly with our free, secure, and lightning-fast tools.</p>
+                
+                <div class="d-flex flex-wrap gap-3 mb-5">
+                    <a href="#tools" class="btn btn-primary btn-lg px-4 py-3 fw-semibold rounded-pill">
+                        Explore Tools
+                    </a>
+                    <a href="#how-it-works" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold rounded-pill">
+                        How It Works
+                    </a>
+                </div>
+                
+                <div class="d-flex flex-wrap gap-4 align-items-center text-white">
+                    <div class="d-flex align-items-center">
+                        <span class="fs-3 fw-bold text-primary me-2">10K+</span>
+                        <span>Daily Users</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="fs-3 fw-bold text-primary me-2">99.9%</span>
+                        <span>Success Rate</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="fs-3 fw-bold text-primary me-2">100%</span>
+                        <span>Free</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right side - Modern Tool Dashboard -->
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 px-4 border-bottom border-1">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'images/pdf-icon.png' %}" alt="PDF Icon" class="me-3" style="width: 32px; height: 32px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/337/337946.png'; this.onerror=null;">
+                            <h5 class="mb-0 fw-bold">Conversion Hub</h5>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Modern File Type Grid -->
+                        <div class="file-type-grid mb-4">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="card bg-light border-0 rounded-3 h-100">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="format-icon bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 50px; height: 50px;">
+                                                <i class="fas fa-file-pdf text-danger"></i>
+                                            </div>
+                                            <h6 class="mb-0 fw-bold">PDF</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card bg-light border-0 rounded-3 h-100">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="format-icon bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 50px; height: 50px;">
+                                                <i class="fas fa-file-image text-success"></i>
+                                            </div>
+                                            <h6 class="mb-0 fw-bold">Image</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card bg-light border-0 rounded-3 h-100">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="format-icon bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 50px; height: 50px;">
+                                                <i class="fas fa-file-word text-primary"></i>
+                                            </div>
+                                            <h6 class="mb-0 fw-bold">Word</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card bg-light border-0 rounded-3 h-100">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="format-icon bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 50px; height: 50px;">
+                                                <i class="fas fa-file-excel text-warning"></i>
+                                            </div>
+                                            <h6 class="mb-0 fw-bold">Excel</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Impressive Stats Bar -->
+                        <div class="stats-bar rounded-4 p-3 mb-4" style="background: linear-gradient(45deg, #1e3a8a, #3b82f6);">
+                            <div class="row g-0 text-center">
+                                <div class="col-4">
+                                    <div class="p-2 text-white">
+                                        <div class="display-6 fw-bold">10M+</div>
+                                        <div class="small opacity-75">Files Processed</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 text-white border-start border-end border-white border-opacity-25">
+                                        <div class="display-6 fw-bold">24</div>
+                                        <div class="small opacity-75">Tools</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-2 text-white">
+                                        <div class="display-6 fw-bold">100%</div>
+                                        <div class="small opacity-75">Free</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Most Popular Tools -->
+                        <div class="popular-tools mb-4">
+                            <h6 class="fw-bold mb-3">Most Popular Tools:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="/pdf-to-png/" class="badge bg-light text-dark text-decoration-none py-2 px-3 rounded-pill">
+                                    <i class="fas fa-exchange-alt me-1 text-primary"></i> PDF to PNG
+                                </a>
+                                <a href="/compress-pdf/" class="badge bg-light text-dark text-decoration-none py-2 px-3 rounded-pill">
+                                    <i class="fas fa-compress-alt me-1 text-primary"></i> Compress PDF
+                                </a>
+                                <a href="/jpg-to-pdf/" class="badge bg-light text-dark text-decoration-none py-2 px-3 rounded-pill">
+                                    <i class="fas fa-crop-alt me-1 text-primary"></i> JPG to PDF
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Fixed Get Started Button -->
+                        <a href="#tools" class="btn btn-primary w-100 py-3 fw-semibold rounded-3">
+                            Get Started Now
+                        </a>
+                    </div>
+                    <div class="card-footer bg-white border-top border-1 py-3">
+                        <div class="row g-0 text-center">
+                            <div class="col-4">
+                                <div class="px-2">
+                                    <i class="fas fa-bolt text-primary"></i>
+                                    <span class="small">Fast</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="px-2 border-start border-end">
+                                    <i class="fas fa-lock text-primary"></i>
+                                    <span class="small">Secure</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="px-2">
+                                    <i class="fas fa-check-circle text-primary"></i>
+                                    <span class="small">Free</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave separator -->
+    <div class="position-absolute bottom-0 left-0 w-100" style="z-index: 1;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100">
+            <path fill="#ffffff" fill-opacity="1" d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,42.7C840,32,960,32,1080,42.7C1200,53,1320,75,1380,85.3L1440,96L1440,100L1380,100C1320,100,1200,100,1080,100C960,100,840,100,720,100C600,100,480,100,360,100C240,100,120,100,60,100L0,100Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Extra JavaScript for Enhanced Smooth Scrolling -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced smooth scrolling for all anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                // Calculate header height for offset (adjust if you have a fixed header)
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+});
+</script>
+
+<!-- All Tools Section with Improved Tabs -->
+<section class="tools py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold h1">Complete Toolkit</h2>
+            <div class="divider mx-auto my-3" style="width: 80px; height: 4px; background-color: #0d6efd;"></div>
+            <p class="lead text-muted mx-auto" style="max-width: 700px;">Comprehensive suite of professional-grade tools to handle all your document and image conversion needs</p>
+        </div>
+        
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8">
+                <div class="bg-white rounded-pill p-2 shadow-sm mb-4">
+                    <ul class="nav nav-pills nav-fill justify-content-center" id="toolsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active rounded-pill fw-bold" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-tools" type="button" role="tab" aria-controls="all-tools" aria-selected="true">All Tools</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill fw-bold" id="pdf-tab" data-bs-toggle="tab" data-bs-target="#pdf-tools" type="button" role="tab" aria-controls="pdf-tools" aria-selected="false">PDF Tools</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill fw-bold" id="image-tab" data-bs-toggle="tab" data-bs-target="#image-tools" type="button" role="tab" aria-controls="image-tools" aria-selected="false">Image Tools</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="toolsTabContent">
+            <div class="tab-pane fade show active" id="all-tools" role="tabpanel" aria-labelledby="all-tab">
+                <div class="row g-4">
+                    {% for tool in tools %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 tool-card border-0 rounded-4 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <div class="tool-icon mb-3">
+                                    <div class="icon-circle bg-primary bg-opacity-10 mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; border-radius: 50%;">
+                                        <i class="fas {{ tool.icon }} fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title fw-bold">{{ tool.name }}</h5>
+                                <p class="card-text small text-muted mb-4">{{ tool.description }}</p>
+                                <a href="{{ tool.url }}" class="btn btn-primary w-100 rounded-pill">Use Tool</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="pdf-tools" role="tabpanel" aria-labelledby="pdf-tab">
+                <div class="row g-4">
+                    {% for tool in tools %}
+                    {% if "PDF" in tool.name or "pdf" in tool.name %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 tool-card border-0 rounded-4 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <div class="tool-icon mb-3">
+                                    <div class="icon-circle bg-primary bg-opacity-10 mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; border-radius: 50%;">
+                                        <i class="fas {{ tool.icon }} fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title fw-bold">{{ tool.name }}</h5>
+                                <p class="card-text small text-muted mb-4">{{ tool.description }}</p>
+                                <a href="{{ tool.url }}" class="btn btn-primary w-100 rounded-pill">Use Tool</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="image-tools" role="tabpanel" aria-labelledby="image-tab">
+                <div class="row g-4">
+                    {% for tool in tools %}
+                    {% if "PNG" in tool.name or "JPG" in tool.name or "WebP" in tool.name or "png" in tool.name or "jpg" in tool.name or "webp" in tool.name %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 tool-card border-0 rounded-4 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <div class="tool-icon mb-3">
+                                    <div class="icon-circle bg-primary bg-opacity-10 mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; border-radius: 50%;">
+                                        <i class="fas {{ tool.icon }} fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title fw-bold">{{ tool.name }}</h5>
+                                <p class="card-text small text-muted mb-4">{{ tool.description }}</p>
+                                <a href="{{ tool.url }}" class="btn btn-primary w-100 rounded-pill">Use Tool</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section with Better Icons and Cards -->
+<section class="features py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold h1">Why ilovepdf.link Is Better</h2>
+            <div class="divider mx-auto my-3" style="width: 80px; height: 4px; background-color: #0d6efd;"></div>
+            <p class="lead text-muted mx-auto" style="max-width: 700px;">Our platform offers unique advantages that make document processing simple and secure</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card feature-card border-0 text-center rounded-4 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-wrapper bg-primary bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-lock text-primary fa-2x"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">100% Secure & Private</h5>
+                        <p class="card-text text-muted">Your files are automatically deleted after processing. We use encrypted connections and never store your files longer than necessary.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card feature-card border-0 text-center rounded-4 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-wrapper bg-primary bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-bolt text-primary fa-2x"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Lightning Fast Processing</h5>
+                        <p class="card-text text-muted">Our optimized servers process your files in seconds, not minutes. Save time and get more done with our high-speed conversion tools.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card feature-card border-0 text-center rounded-4 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-wrapper bg-primary bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-cloud text-primary fa-2x"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">No Installation Required</h5>
+                        <p class="card-text text-muted">Work directly in your browser with no software to download. Access our tools from any device, anywhere, anytime.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card feature-card border-0 text-center rounded-4 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-wrapper bg-primary bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-check-circle text-primary fa-2x"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">High Quality Output</h5>
+                        <p class="card-text text-muted">We maintain the highest possible quality in all conversions, ensuring your documents look professional every time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section with Timeline Design -->
+<section id="how-it-works" class="how-it-works py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold h1">How It Works</h2>
+            <div class="divider mx-auto my-3" style="width: 80px; height: 4px; background-color: #0d6efd;"></div>
+            <p class="lead text-muted mx-auto" style="max-width: 700px;">Converting your files is simple with our easy 4-step process</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="timeline-wrapper">
+                    <div class="row g-4">
+                        <div class="col-md-3 text-center">
+                            <div class="timeline-step">
+                                <div class="step-number-wrap position-relative mb-4">
+                                    <div class="step-number bg-primary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 60px; height: 60px; z-index: 2;">
+                                        <span class="h4 mb-0 fw-bold">1</span>
+                                    </div>
+                                    <div class="step-line position-absolute bg-primary" style="height: 3px; width: 50%; top: 50%; right: 0;"></div>
+                                </div>
+                                <div class="card border-0 h-100 rounded-4 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-3">Select Your Tool</h5>
+                                        <p class="text-muted mb-0">Choose the conversion tool that fits your needs from our comprehensive selection.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="timeline-step">
+                                <div class="step-number-wrap position-relative mb-4">
+                                    <div class="step-line position-absolute bg-primary" style="height: 3px; width: 50%; top: 50%; left: 0;"></div>
+                                    <div class="step-number bg-primary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 60px; height: 60px; z-index: 2;">
+                                        <span class="h4 mb-0 fw-bold">2</span>
+                                    </div>
+                                    <div class="step-line position-absolute bg-primary" style="height: 3px; width: 50%; top: 50%; right: 0;"></div>
+                                </div>
+                                <div class="card border-0 h-100 rounded-4 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-3">Upload Your Files</h5>
+                                        <p class="text-muted mb-0">Drag and drop your files directly from your computer or cloud storage service.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="timeline-step">
+                                <div class="step-number-wrap position-relative mb-4">
+                                    <div class="step-line position-absolute bg-primary" style="height: 3px; width: 50%; top: 50%; left: 0;"></div>
+                                    <div class="step-number bg-primary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 60px; height: 60px; z-index: 2;">
+                                        <span class="h4 mb-0 fw-bold">3</span>
+                                    </div>
+                                    <div class="step-line position-absolute bg-primary" style="height: 3px; width: 50%; top: 50%; right: 0;"></div>
+                                </div>
+                                <div class="card border-0 h-100 rounded-4 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-3">Convert Instantly</h5>
+                                        <p class="text-muted mb-0">Our powerful servers process your conversion quickly and efficiently.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="timeline-step">
+                                <div class="step-number-wrap position-relative mb-4">
+                                    <div class="step-line position-absolute bg-primary" style="height: 3px; width: 50%; top: 50%; left: 0;"></div>
+                                    <div class="step-number bg-primary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 60px; height: 60px; z-index: 2;">
+                                        <span class="h4 mb-0 fw-bold">4</span>
+                                    </div>
+                                </div>
+                                <div class="card border-0 h-100 rounded-4 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-3">Download Results</h5>
+                                        <p class="text-muted mb-0">Get your converted files immediately, ready to use for any purpose.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section with Modern Cards -->
+<section class="testimonials py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold h1">What Our Users Say</h2>
+            <div class="divider mx-auto my-3" style="width: 80px; height: 4px; background-color: #0d6efd;"></div>
+            <p class="lead text-muted mx-auto" style="max-width: 700px;">Join thousands of satisfied users who trust ilovepdf.link for all their conversion needs</p>
+        </div>
+        
+        <div class="row justify-content-center g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card testimonial-card border-0 rounded-4 shadow-sm h-100 position-relative hover-lift">
+                    <div class="card-body p-4">
+                        <div class="quote-icon position-absolute text-primary opacity-25" style="top: 20px; right: 20px; font-size: 3rem;">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                        <div class="d-flex mb-4">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text mb-4">"ilovepdf.link saved me so much time with their PDF to PNG converter. The quality is excellent and the process couldn't be easier."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width: 50px; height: 50px;">
+                                <span class="h5 mb-0">ST</span>
+                            </div>
+                            <div class="ms-3">
+                                <p class="fw-bold mb-0">Sarah T.</p>
+                                <small class="text-muted">Graphic Designer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card testimonial-card border-0 rounded-4 shadow-sm h-100 position-relative hover-lift">
+                    <div class="card-body p-4">
+                        <div class="quote-icon position-absolute text-primary opacity-25" style="top: 20px; right: 20px; font-size: 3rem;">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                        <div class="d-flex mb-4">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text mb-4">"I use the Word to PDF converter weekly for work documents. It maintains all formatting perfectly and processes files in seconds."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width: 50px; height: 50px;">
+                                <span class="h5 mb-0">MR</span>
+                            </div>
+                            <div class="ms-3">
+                                <p class="fw-bold mb-0">Michael R.</p>
+                                <small class="text-muted">Business Analyst</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card testimonial-card border-0 rounded-4 shadow-sm h-100 position-relative hover-lift">
+                    <div class="card-body p-4">
+                        <div class="quote-icon position-absolute text-primary opacity-25" style="top: 20px; right: 20px; font-size: 3rem;">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                        <div class="d-flex mb-4">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text mb-4">"The WebP to PNG converter is a lifesaver for my web development projects. Fast, reliable, and completely free!"</p>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width: 50px; height: 50px;">
+                                <span class="h5 mb-0">DL</span>
+                            </div>
+                            <div class="ms-3">
+                                <p class="fw-bold mb-0">David L.</p>
+                                <small class="text-muted">Web Developer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section with Redesigned Accordion -->
+<section class="faq py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold h1">Frequently Asked Questions</h2>
+            <div class="divider mx-auto my-3" style="width: 80px; height: 4px; background-color: #0d6efd;"></div>
+            <p class="lead text-muted mx-auto" style="max-width: 700px;">Find answers to common questions about our tools and services</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion accordion-flush custom-accordion" id="faqAccordion">
+                    <div class="accordion-item mb-3 border-0 rounded-4 shadow-sm overflow-hidden">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button py-4 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Are all tools on ilovepdf.link completely free?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-4 py-4 bg-white">
+                                Yes, all our PDF and image conversion tools are 100% free to use with no hidden fees or subscriptions required. We believe in providing essential document tools accessible to everyone.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item mb-3 border-0 rounded-4 shadow-sm overflow-hidden">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed py-4 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                How secure are my files when using ilovepdf.link?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-4 py-4 bg-white">
+                                We take security seriously. All file transfers are encrypted using HTTPS, and your files are automatically deleted from our servers shortly after processing. We never access or review the content of your files.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item mb-3 border-0 rounded-4 shadow-sm overflow-hidden">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed py-4 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                What is the maximum file size I can convert?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-4 py-4 bg-white">
+                                Our free tools support files up to 50MB in size. This limit covers most standard documents and images for everyday use.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item mb-3 border-0 rounded-4 shadow-sm overflow-hidden">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed py-4 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Do I need to create an account to use the tools?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-4 py-4 bg-white">
+                                No registration is required to use our conversion tools. Simply visit the site, upload your file, and download the converted result. We've designed the process to be as straightforward as possible.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item mb-3 border-0 rounded-4 shadow-sm overflow-hidden">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed py-4 px-4 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                What formats do your tools support?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body px-4 py-4 bg-white">
+                                Our tools support a wide range of formats including PDF, PNG, JPG, WebP, and Word documents. Each conversion tool specifies exactly which input and output formats are supported.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced CTA Section -->
+<section class="cta py-5 position-relative">
+    <div class="cta-bg position-absolute w-100 h-100 top-0 start-0" style="background: linear-gradient(120deg, #0d6efd, #0a4dca); z-index: -1;"></div>
+    
+    <!-- Animated Background Elements -->
+    <div class="position-absolute w-100 h-100 top-0 start-0 overflow-hidden" style="z-index: -1;">
+        <div class="floating-shape-1 position-absolute bg-white opacity-10 rounded" style="width: 200px; height: 200px; top: 10%; left: 5%; animation: float-1 20s infinite linear;"></div>
+        <div class="floating-shape-2 position-absolute bg-white opacity-10 rounded" style="width: 150px; height: 150px; bottom: 10%; right: 10%; animation: float-2 15s infinite linear;"></div>
+        <div class="floating-shape-3 position-absolute bg-white opacity-10 rounded-circle" style="width: 100px; height: 100px; top: 40%; right: 20%; animation: float-3 25s infinite linear;"></div>
+    </div>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card bg-white border-0 rounded-4 shadow p-4 position-relative overflow-hidden">
+                    <!-- Design Element - Corner Accent -->
+                    <div class="position-absolute" style="background-color: #0d6efd; width: 100px; height: 100px; top: -50px; right: -50px; transform: rotate(45deg);"></div>
+                    
+                    <div class="card-body p-4 text-center">
+                        <i class="fas fa-rocket text-primary mb-3" style="font-size: 3rem;"></i>
+                        <h2 class="fw-bold mb-3">Ready to Transform Your Documents?</h2>
+                        <p class="lead mb-4">Join over 100,000 satisfied users who trust ilovepdf.link for all their PDF and image conversion needs.</p>
+                        <!-- Fix for the Get Started Now button in the CTA section -->
+<div class="d-grid gap-2 col-md-8 mx-auto">
+    <a href="#tools" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill shadow">
+        <i class="fas fa-magic me-2"></i>Get Started Now
+    </a>
+</div>
+
+                        <div class="mt-4 d-flex justify-content-center flex-wrap">
+                            <div class="px-3 py-2"><i class="fas fa-check-circle text-primary me-2"></i>No registration</div>
+                            <div class="px-3 py-2"><i class="fas fa-check-circle text-primary me-2"></i>100% free</div>
+                            <div class="px-3 py-2"><i class="fas fa-check-circle text-primary me-2"></i>Works anywhere</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_css %}
+<style>
+    /* General styling improvements */
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Rounded corners utility */
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+    
+    .rounded-top-4 {
+        border-top-left-radius: 1rem !important;
+        border-top-right-radius: 1rem !important;
+    }
+    
+    /* Animation keyframes for floating elements */
+    @keyframes float-1 {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(20px, 30px) rotate(180deg); }
+        100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    
+    @keyframes float-2 {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(-20px, -15px) rotate(180deg); }
+        100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    
+    @keyframes float-3 {
+        0% { transform: translate(0, 0); }
+        50% { transform: translate(-25px, 25px); }
+        100% { transform: translate(0, 0); }
+    }
+    
+    /* Custom accordion styling */
+    .custom-accordion .accordion-button {
+        background-color: #fff;
+    }
+    
+    .custom-accordion .accordion-button:not(.collapsed) {
+        color: #0d6efd;
+        background-color: #fff;
+        box-shadow: none;
+    }
+    
+    .custom-accordion .accordion-button:focus {
+        box-shadow: none;
+    }
+    
+    .custom-accordion .accordion-button::after {
+        background-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add smooth scrolling to all links with hash
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

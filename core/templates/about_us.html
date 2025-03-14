@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - ilovepdf.link{% endblock %}
+
+{% block content %}
+<!-- About Header -->
+<section class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-5 fw-bold mb-3">About Us</h1>
+                <p class="lead mb-0">Empowering users with free, powerful PDF and image conversion tools.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm border-0 p-4 mb-5">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-4 mb-md-0">
+                                <h2 class="h3 fw-bold mb-4">Our Story</h2>
+                                <p>ilovepdf.link was born from a simple idea: document conversion should be simple, accessible, and free for everyone. Our journey began when we found ourselves constantly struggling with PDF and image conversions for work and personal projects.</p>
+                                <p>We realized that many existing solutions were either packed with ads, limited in functionality, or required expensive subscriptions. That's when we decided to create a better alternative - a clean, fast, and totally free suite of conversion tools.</p>
+                                <p>Since our launch, we've helped thousands of users transform millions of files, and we're just getting started.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Our Story" class="img-fluid rounded shadow">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ... (rest of the sections remain identical except image URLs) ... -->
+                
+                <div class="card shadow-sm border-0 p-4 mb-5">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 order-md-2 mb-4 mb-md-0">
+                                <h2 class="h3 fw-bold mb-4">Our Technology</h2>
+                                <p>Behind our simple interface lies powerful technology designed to handle a wide range of file conversions with precision and speed.</p>
+                                <p>We use state-of-the-art conversion engines and cloud infrastructure to ensure high-quality results while maintaining fast processing times. Our platform is built on a modern tech stack that includes:</p>
+                                <ul>
+                                    <li>Advanced PDF processing libraries</li>
+                                    <li>High-fidelity image conversion tools</li>
+                                    <li>Scalable cloud architecture</li>
+                                    <li>Robust security measures</li>
+                                </ul>
+                                <p>We're constantly improving our technology to deliver the best possible experience for our users.</p>
+                            </div>
+                            <div class="col-md-6 order-md-1">
+                                <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Our Technology" class="img-fluid rounded shadow">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ... (rest of the template remains unchanged) ... -->
+
+<!-- Our Tools Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h2 class="h3 fw-bold mb-4">Our Tools</h2>
+                <p class="mb-5">We offer a comprehensive suite of free conversion tools to handle all your document and image needs.</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-file-pdf text-primary fa-3x"></i>
+                        </div>
+                        <h3 class="h5 fw-bold">PDF Conversion</h3>
+                        <p>Convert PDFs to various formats including images and editable documents. Or create PDFs from other file types.</p>
+                        <ul class="list-unstyled text-start mt-3">
+                            <li><i class="fas fa-check text-primary me-2"></i> PDF to PNG/JPG</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> PDF to Word</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> Images to PDF</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> Word to PDF</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-file-image text-primary fa-3x"></i>
+                        </div>
+                        <h3 class="h5 fw-bold">Image Conversion</h3>
+                        <p>Convert between various image formats while maintaining quality. Optimize for size or resolution.</p>
+                        <ul class="list-unstyled text-start mt-3">
+                            <li><i class="fas fa-check text-primary me-2"></i> JPG to PNG</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> PNG to JPG</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> WebP to PNG</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> PNG to WebP</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-tools text-primary fa-3x"></i>
+                        </div>
+                        <h3 class="h5 fw-bold">Additional Features</h3>
+                        <p>Beyond basic conversions, we offer additional features to help you work with your documents more effectively.</p>
+                        <ul class="list-unstyled text-start mt-3">
+                            <li><i class="fas fa-check text-primary me-2"></i> Batch processing</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> Custom output settings</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> Secure file handling</li>
+                            <li><i class="fas fa-check text-primary me-2"></i> No registration required</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm border-0 p-4">
+                    <div class="card-body">
+                        <h2 class="h3 fw-bold mb-4 text-center">Why Choose ilovepdf.link?</h2>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6 mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-coins fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 fw-bold">Completely Free</h3>
+                                        <p>All our tools are 100% free to use with no hidden fees, subscriptions, or premium features. What you see is what you get.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-user-secret fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 fw-bold">Private & Secure</h3>
+                                        <p>Your files are automatically deleted after processing. We don't store them, and we don't mine them for data.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-laptop fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 fw-bold">No Installation</h3>
+                                        <p>No need to download or install any software. Our tools work directly in your browser on any device.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-chart-line fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 fw-bold">High Quality</h3>
+                                        <p>We prioritize quality in all our conversions, ensuring your documents and images look exactly as you expect.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-bolt fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 fw-bold">Lightning Fast</h3>
+                                        <p>Our optimized processing ensures quick conversions, saving you time and increasing productivity.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3 text-primary">
+                                        <i class="fas fa-globe fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 fw-bold">Accessible Anywhere</h3>
+                                        <p>Access our tools from any device with an internet connection, whether you're on desktop, tablet, or mobile.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="h3 fw-bold mb-3">Ready to try our tools?</h2>
+                <p class="lead mb-4">Join thousands of satisfied users who trust ilovepdf.link for their document and image conversion needs.</p>
+                <a href="{% url 'index' %}" class="btn btn-light btn-lg px-4 py-2">Get Started Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

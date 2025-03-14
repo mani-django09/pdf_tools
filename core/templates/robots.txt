@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /_pycache_/
+Disallow: /media/_pycache_/
+
+# Allow all files in static directory
+Allow: /static/
+
+# Sitemap location
+Sitemap: https://ilovepdf.link/sitemap.xml

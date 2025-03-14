@@ -1,0 +1,1318 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF to Word Converter | Convert PDF to Word Online Free | ilovepdf.link{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .dropzone {
+        border: 2px dashed #0d6efd;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    
+    .dropzone.dragover {
+        background-color: #e9ecef;
+        border-color: #0b5ed7;
+    }
+    
+    .file-info-container {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .file-info {
+        display: flex;
+        align-items: center;
+    }
+    
+    .file-icon {
+        font-size: 2.5rem;
+        margin-right: 1rem;
+        color: #0d6efd;
+    }
+    
+    .word-icon {
+        color: #185ABD;
+    }
+    
+    .pdf-icon {
+        color: #D93025;
+    }
+    
+    .file-details {
+        flex: 1;
+    }
+    
+    .file-name {
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+    
+    .file-size {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .file-format {
+        font-size: 0.85rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        background-color: #e9ecef;
+        color: #495057;
+        display: inline-block;
+        margin-top: 5px;
+    }
+    
+    .file-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .conversion-arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+        color: #6c757d;
+        font-size: 1.5rem;
+    }
+    
+    .result-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+        display: none;
+    }
+    
+    .result-file-preview {
+        max-width: 100%;
+        margin: 0 auto 20px;
+        background-color: white;
+        border-radius: 4px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .result-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,255,255,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        display: none;
+    }
+    
+    .loading-content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .conversion-steps {
+        counter-reset: step-counter;
+        margin: 30px 0;
+    }
+    
+    .conversion-step {
+        position: relative;
+        padding-left: 50px;
+        margin-bottom: 25px;
+    }
+    
+    .conversion-step:before {
+        content: counter(step-counter);
+        counter-increment: step-counter;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 36px;
+        height: 36px;
+        background-color: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    .conversion-step h5 {
+        margin-bottom: 8px;
+    }
+    
+    .feature-card {
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #0d6efd;
+    }
+    
+    .security-badges {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+    
+    .security-badge {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 120px;
+        text-align: center;
+    }
+    
+    .security-badge i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #28a745;
+    }
+    
+    .security-badge span {
+        font-size: 0.8rem;
+        color: #495057;
+    }
+    
+    .document-preview {
+        width: 100%;
+        max-width: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        margin: 0 auto 15px;
+    }
+    
+    .word-preview-icon {
+        max-width: 150px;
+        margin-top: 15px;
+    }
+    
+    .word-preview-panel {
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        position: relative;
+        height: 220px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .word-watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        color: rgba(0, 0, 0, 0.05);
+        font-size: 5rem;
+        font-weight: bold;
+        pointer-events: none;
+    }
+    
+    .success-message {
+        margin-top: 10px;
+        color: #28a745;
+        font-weight: 500;
+    }
+    
+    .file-info-details {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .compare-table {
+        margin-top: 30px;
+    }
+    
+    .compare-table th {
+        background-color: #f1f8ff;
+        text-align: center;
+    }
+    
+    .table-feature {
+        font-weight: 500;
+    }
+    
+    .feature-check {
+        color: #28a745;
+        font-size: 1.2rem;
+    }
+    
+    .feature-x {
+        color: #dc3545;
+        font-size: 1.2rem;
+    }
+    
+    .info-note {
+        background-color: #e9f5ff;
+        border-left: 4px solid #0d6efd;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .format-note {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .format-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+    }
+    
+    .format-details {
+        font-size: 0.9rem;
+    }
+    
+    .faq-answer ul {
+        padding-left: 20px;
+    }
+    
+    .conversion-options {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .ocr-switch {
+        margin-top: 10px;
+    }
+    
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="tool-header py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="mb-3">PDF to Word Converter</h1>
+                <p class="lead mb-4">Convert PDF to Word online with ilovepdf.link's free PDF to Word converter. Transform your PDF documents into editable Word files while preserving the original formatting.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="converter py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="convertForm" enctype="multipart/form-data">
+                            <div id="uploadSection">
+                                <div id="dropzone" class="dropzone mb-4">
+                                    <div class="dropzone-content">
+                                        <i class="fas fa-file-pdf fa-3x mb-3" style="color: #D93025;"></i>
+                                        <h4>Drag & Drop PDF Document Here</h4>
+                                        <p class="mb-2">Convert PDF to Word instantly with ilovepdf.link's free converter</p>
+                                        <p>or</p>
+                                        <button type="button" id="browseButton" class="btn btn-primary">
+                                            <i class="fas fa-file-pdf me-2"></i> Browse PDF Files
+                                        </button>
+                                        <input type="file" id="fileInput" accept=".pdf,application/pdf" class="d-none">
+                                    </div>
+                                </div>
+                                
+                                <div id="supportedFormats" class="text-center mb-4 mt-3">
+                                    <p class="text-muted mb-2">Supported formats:</p>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="format-note">
+                                            <span class="format-icon"><i class="fas fa-file-pdf" style="color: #D93025;"></i></span>
+                                            <span class="format-details">.pdf - PDF Document</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="fileInfoContainer" class="file-info-container d-none">
+                                <div class="file-info">
+                                    <i class="fas fa-file-pdf fa-3x file-icon pdf-icon"></i>
+                                    <div class="file-details">
+                                        <div id="fileName" class="file-name">document.pdf</div>
+                                        <div id="fileSize" class="file-size">0 KB</div>
+                                        <span class="file-format">PDF Document</span>
+                                    </div>
+                                    <div class="file-actions">
+                                        <button type="button" id="removeFileButton" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="conversion-options mt-3">
+                                    <h6 class="mb-3">Conversion Options</h6>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="outputFormat" class="form-label">Output Format</label>
+                                            <select class="form-select" id="outputFormat">
+                                                <option value="docx" selected>Word Document (.docx)</option>
+                                                <option value="doc">Word 97-2003 (.doc)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="quality" class="form-label">Quality Settings</label>
+                                            <select class="form-select" id="quality">
+                                                <option value="highest">Highest (Best Quality)</option>
+                                                <option value="balanced" selected>Balanced (Recommended)</option>
+                                                <option value="efficient">Efficient (Smaller File)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="ocr-switch mt-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="ocrSwitch" checked>
+                                            <label class="form-check-label" for="ocrSwitch">
+                                                Enable OCR (makes scanned PDFs editable)
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">OCR helps convert scanned pages and images into editable text</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="conversion-arrow">
+                                    <i class="fas fa-long-arrow-alt-down"></i>
+                                </div>
+                                
+                                <div class="file-info">
+                                    <i class="fas fa-file-word fa-3x file-icon word-icon"></i>
+                                    <div class="file-details">
+                                        <div id="outputFileName" class="file-name">document.docx</div>
+                                        <div class="file-size">Processing...</div>
+                                        <span class="file-format">Word Document</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" id="convertButton" class="btn btn-primary btn-lg" disabled>
+                                    <i class="fas fa-exchange-alt me-2"></i> Convert PDF to Word
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Conversion Result -->
+                        <div id="resultContainer" class="result-container">
+                            <h4 class="mb-4">Conversion Completed</h4>
+                            
+                            <div class="result-file-preview">
+                                <div class="word-preview-panel">
+                                    <div class="word-watermark">DOCX</div>
+                                    <i class="fas fa-file-word fa-4x mb-3" style="color: #185ABD;"></i>
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEwNiA0MDZWMTA2SDMwNkwzODYgMTg2VjQwNkgxMDZaIiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMTg1QUJEIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNMzA2IDEwNlYxODZIMzg2IiBzdHJva2U9IiMxODVBQkQiIHN0cm9rZS13aWR0aD0iNCIvPjxwYXRoIGQ9Ik0xNDAgMjQ2SDM0MCIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNMTQwIDI4MEgzNDAiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PHBhdGggZD0iTTE0MCAzMTRIMzQwIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iNCIvPjxwYXRoIGQ9Ik0xNDAgMzQ4SDI0MCIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjQiLz48L3N2Zz4=" alt="Word Result" class="word-preview-icon">
+                                    <div class="success-message">Successfully converted to Word</div>
+                                </div>
+                                <div class="file-info-details mt-3">
+                                    <div id="resultFileName" class="fw-bold mb-1"></div>
+                                    <div id="resultFileSize" class="small"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="result-actions">
+                                <button id="downloadButton" class="btn btn-success">
+                                    <i class="fas fa-download me-2"></i> Download Word Document
+                                </button>
+                                <button id="newConversionButton" class="btn btn-outline-primary">
+                                    <i class="fas fa-redo me-2"></i> New Conversion
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="security-badges mt-4">
+                    <div class="security-badge">
+                        <i class="fas fa-lock"></i>
+                        <span>100% Secure</span>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Privacy Protected</span>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-bolt"></i>
+                        <span>Fast Conversion</span>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>High Quality</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Global Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 id="loadingMessage">Converting PDF to Word...</h5>
+        <p class="text-muted">Please wait, this may take a moment</p>
+    </div>
+</div>
+
+<section class="tool-info py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3>About PDF to Word Conversion</h3>
+                <p>Converting PDF files to Word format allows you to edit, modify, and repurpose content that was previously locked in a static PDF document. Our free PDF to Word converter makes this process simple, quick, and accurate, giving you editable Word documents that maintain the original layout and formatting of your PDFs.</p>
+                
+                <p>While PDFs are excellent for sharing and preserving document appearance, they weren't designed for easy editing. Word documents, on the other hand, are perfect for making changes and updates. When you convert PDF to Word with ilovepdf.link, you're transforming your document from a fixed format to a fully editable file that you can customize to meet your needs.</p>
+                
+                <h4 class="mt-4">Benefits of Converting PDF to Word</h4>
+                <ul>
+                    <li><strong>Edit Text and Content:</strong> Make changes to paragraphs, headings, lists, and other text elements that were previously fixed in the PDF.</li>
+                    <li><strong>Update Information:</strong> Easily update outdated information, correct errors, or add new content to documents that were only available as PDFs.</li>
+                    <li><strong>Repurpose Content:</strong> Extract and reuse text, tables, and other elements from PDFs in new documents, presentations, or other projects.</li>
+                    <li><strong>Format and Restructure:</strong> Adjust formatting, change styles, reorganize sections, and completely restructure documents to suit your needs.</li>
+                    <li><strong>Add or Remove Content:</strong> Insert new pages, sections, images, or other elements, or remove unnecessary parts of the document.</li>
+                    <li><strong>Collaborate and Track Changes:</strong> Use Word's collaboration features to work with colleagues, add comments, and track changes—something not possible with standard PDFs.</li>
+                </ul>
+                
+                <div class="info-note mt-4">
+                    <h5><i class="fas fa-lightbulb me-2"></i> When to Convert PDF to Word</h5>
+                    <p>Convert your PDF documents to Word whenever you need to:</p>
+                    <ul>
+                        <li>Edit text, formatting, or layout of a PDF document</li>
+                        <li>Extract content from a PDF to reuse in other documents</li>
+                        <li>Update information in old documents that only exist as PDFs</li>
+                        <li>Collaborate with others on document content</li>
+                        <li>Modify or customize templates or forms received as PDFs</li>
+                        <li>Make significant changes to a document where PDF editing would be too limited</li>
+                    </ul>
+                </div>
+                
+                <div class="mt-4">
+                    <h4>PDF vs. Word: Understanding the Differences</h4>
+                    <table class="table compare-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>PDF Format</th>
+                                <th>Word Format</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="table-feature">Editability</td>
+                                <td>Limited editing <i class="fas fa-times feature-x"></i></td>
+                                <td>Highly editable <i class="fas fa-check feature-check"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="table-feature">Consistent Display</td>
+                                <td>Identical on all devices <i class="fas fa-check feature-check"></i></td>
+                                <td>May vary between devices <i class="fas fa-times feature-x"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="table-feature">Required Software</td>
+                                <td>Any PDF reader (widely available)</td>
+                                <td>Microsoft Word or compatible</td>
+                            </tr>
+                            <tr>
+                                <td class="table-feature">Structure</td>
+                                <td>Fixed layout</td>
+                                <td>Flexible, flowing layout</td>
+                            </tr>
+                            <tr>
+                                <td class="table-feature">Intended Use</td>
+                                <td>Document distribution and viewing</td>
+                                <td>Document creation and editing</td>
+                            </tr>
+                            <tr>
+                                <td class="table-feature">Best For</td>
+                                <td>Final documents, official forms, distribution</td>
+                                <td>Drafting, editing, collaboration</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h3>How to Use Our Free PDF to Word Converter</h3>
+                <p>Converting your PDF documents to editable Word files is straightforward with our intuitive tool. Our advanced technology handles the complex conversion process, delivering high-quality, editable Word documents that closely match your original PDF.</p>
+                
+                <div class="conversion-steps">
+                    <div class="conversion-step">
+                        <h5>Upload Your PDF Document</h5>
+                        <p>Drag and drop your PDF file into the upload area, or click "Browse PDF Files" to select a document from your device. Our converter accepts all types of PDF files, including text-based PDFs and scanned documents.</p>
+                    </div>
+                    
+                    <div class="conversion-step">
+                        <h5>Choose Conversion Options</h5>
+                        <p>Select your preferred output format (DOCX or DOC), quality settings, and choose whether to enable OCR for scanned documents. Our OCR technology can convert image-based PDFs into editable text, making even scanned documents fully editable.</p>
+                    </div>
+                    
+                    <div class="conversion-step">
+                        <h5>Download Your Word Document</h5>
+                        <p>After conversion, which typically takes just seconds, you'll be able to download your new Word document. The resulting file will maintain the text, images, tables, and formatting of your original PDF, but in a fully editable format that you can open with Microsoft Word or any compatible word processor.</p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h5 class="alert-heading"><i class="fas fa-info-circle me-2"></i> What Gets Preserved During Conversion</h5>
+                    <p class="mb-0">Our advanced PDF to Word converter maintains these elements from your original document:</p>
+                    <ul class="mb-0 mt-2">
+                        <li>Text content with most fonts and formatting</li>
+                        <li>Tables with their structure and content</li>
+                        <li>Images and graphics at high quality</li>
+                        <li>Basic page layout and formatting</li>
+                        <li>Lists, bullet points, and numbering</li>
+                        <li>Simple headers and footers</li>
+                    </ul>
+                </div>
+                
+                <div class="mt-4">
+                    <h4>Perfect For Various Document Types</h4>
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-contract feature-icon"></i>
+                                    <h5>Business Documents</h5>
+                                    <p class="small">Reports, proposals, contracts, invoices that need updating</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-graduate feature-icon"></i>
+                                    <h5>Academic Papers</h5>
+                                    <p class="small">Research papers, essays, theses that require revisions</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-briefcase feature-icon"></i>
+                                    <h5>Professional Documents</h5>
+                                    <p class="small">Resumes, cover letters, and applications that need updates</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-alt feature-icon"></i>
+                                    <h5>Form Templates</h5>
+                                    <p class="small">Forms, questionnaires, and templates that need customization</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-magic fa-3x text-primary mb-3"></i>
+                        <h4>Advanced OCR Technology</h4>
+                        <p>Our converter includes powerful Optical Character Recognition (OCR) technology that can identify and convert text in scanned PDFs and images. This means even PDFs created from scans can be transformed into fully editable Word documents.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                        <h4>Secure & Private Conversion</h4>
+                        <p>Your documents are processed securely and deleted automatically after conversion. We use encrypted connections for all file transfers and never store your content permanently. Your confidential information remains completely private.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tachometer-alt fa-3x text-primary mb-3"></i>
+                        <h4>Fast & Accurate Conversion</h4>
+                        <p>Our PDF to Word converter uses advanced algorithms to analyze your document structure, ensuring the most accurate conversion possible. Most documents are processed in seconds, with complex layouts maintained for professional results.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Frequently Asked Questions About PDF to Word Conversion</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                How accurate is the PDF to Word conversion?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body faq-answer">
+                                <p>The accuracy of our PDF to Word conversion depends on several factors, but our tool consistently delivers excellent results for most documents:</p>
+                                
+                                <ul>
+                                    <li><strong>Text-based PDFs</strong> (PDFs created directly from digital sources like Word, Excel, etc.) typically convert with very high accuracy—usually 95-99%. Text, basic formatting, tables, and most images will transfer correctly to the Word document.</li>
+                                    <li><strong>Scanned PDFs</strong> rely on our OCR technology, which is generally 85-95% accurate for clean, clear scans. Factors affecting OCR accuracy include scan quality, resolution, text clarity, font complexity, and language.</li>
+                                    <li><strong>Complex layouts</strong> with multiple columns, text boxes, wrapped images, and decorative elements may require some manual adjustment after conversion.</li>
+                                </ul>
+                                
+                                <p>Here's what typically converts well:</p>
+                                <ul>
+                                    <li>Standard text paragraphs, headings, and basic formatting</li>
+                                    <li>Simple tables and spreadsheet data</li>
+                                    <li>Basic images and graphics</li>
+                                    <li>Bulleted and numbered lists</li>
+                                    <li>Common fonts and standard characters</li>
+                                </ul>
+                                
+                                <p>Elements that may require adjustment after conversion:</p>
+                                <ul>
+                                    <li>Complex, multi-level tables with merged cells</li>
+                                    <li>Text in unusual fonts or very small font sizes</li>
+                                    <li>Text embedded within images</li>
+                                    <li>Complex mathematical equations and special symbols</li>
+                                    <li>Custom graphics, backgrounds, and watermarks</li>
+                                    <li>Document elements created with advanced PDF features</li>
+                                </ul>
+                                
+                                <p>For professional or important documents, we recommend reviewing the converted Word file and making any necessary adjustments to perfect the formatting and layout.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Can I convert scanned PDFs and image-based PDFs to editable Word documents?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body faq-answer">
+                                <p>Yes, our converter can transform scanned PDFs and image-based PDFs into editable Word documents through Optical Character Recognition (OCR) technology. This advanced feature identifies text within images and converts it to editable text in your Word document.</p>
+                                
+                                <p><strong>How Our OCR Works:</strong></p>
+                                <ol>
+                                    <li>Our system analyzes your PDF to determine if it contains scanned or image-based text</li>
+                                    <li>The OCR engine processes these images, identifying characters, words, and paragraphs</li>
+                                    <li>The recognized text is converted into editable Word content while attempting to preserve the original layout</li>
+                                </ol>
+                                
+                                <p><strong>For Best OCR Results:</strong></p>
+                                <ul>
+                                    <li><strong>Use high-quality scans</strong> - Clear, high-resolution scans (300 DPI or higher) produce the best OCR results</li>
+                                    <li><strong>Ensure clean, clear text</strong> - Documents with clean, crisp text convert more accurately than faded or blurry scans</li>
+                                    <li><strong>Standard fonts</strong> - Common fonts are recognized more accurately than decorative or unusual fonts</li>
+                                    <li><strong>Good contrast</strong> - Black text on white background works best; colored text or backgrounds may reduce accuracy</li>
+                                    <li><strong>Straight alignment</strong> - Pages scanned at an angle may reduce OCR accuracy</li>
+                                </ul>
+                                
+                                <p>While our OCR technology is quite advanced, it's important to note that no OCR solution is 100% perfect. You may need to make some corrections to the text after conversion, especially for poor-quality scans, complex layouts, or unusual fonts. For critical documents, we recommend reviewing the converted text carefully.</p>
+                                
+                                <p>To enable OCR for your conversion, simply make sure the "Enable OCR" option is checked before converting your PDF.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Is my data secure when using your online PDF to Word converter?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body faq-answer">
+                                <p>We understand that many PDF documents contain sensitive or confidential information, which is why we've implemented comprehensive security measures to protect your data:</p>
+                                
+                                <ul>
+                                    <li><strong>Secure File Transfer:</strong> All uploads and downloads use encrypted HTTPS connections, ensuring your documents can't be intercepted during transmission.</li>
+                                    <li><strong>Temporary Processing:</strong> Your PDF files are stored only for the duration of the conversion process in a secure, isolated environment.</li>
+                                    <li><strong>Automatic Deletion:</strong> All uploaded PDFs and generated Word documents are permanently deleted from our servers immediately after conversion or a maximum of 24 hours for failed conversions.</li>
+                                    <li><strong>No Content Retention:</strong> We don't extract, analyze, or store the content of your documents for any purpose beyond the conversion you've requested.</li>
+                                    <li><strong>No Account Required:</strong> You can use our PDF to Word converter anonymously without creating an account or providing personal information.</li>
+                                    <li><strong>No Third-Party Access:</strong> Your files are not shared with or accessible to any third parties.</li>
+                                </ul>
+                                
+                                <p>Our PDF to Word converter follows a "privacy by design" approach, minimizing data collection and storage while providing the functionality you need. The entire conversion process is automated, and no humans view or access your document content unless you specifically request technical support.</p>
+                                
+                                <p>For users with heightened security requirements, such as those handling highly confidential or regulated information (like HIPAA-protected data), we recommend:</p>
+                                
+                                <ul>
+                                    <li>Removing sensitive information before uploading if it's not essential to the document you need converted</li>
+                                    <li>Considering our enterprise solutions with additional security controls for handling highly sensitive documents</li>
+                                    <li>For the most sensitive documents, using offline conversion software within your secure environment</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                What's the difference between DOCX and DOC formats when converting from PDF?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body faq-answer">
+                                <p>When converting your PDF to Word, you have two main format options: DOCX and DOC. Each has its advantages and potential use cases:</p>
+                                
+                                <h5 class="mt-3">DOCX Format (Modern)</h5>
+                                <ul>
+                                    <li><strong>Introduced in:</strong> Microsoft Word 2007 and later versions</li>
+                                    <li><strong>File structure:</strong> XML-based, more modern and flexible</li>
+                                    <li><strong>Advantages:</strong>
+                                        <ul>
+                                            <li>Smaller file sizes (typically 30-50% smaller than DOC)</li>
+                                            <li>Better support for modern features (advanced formatting, graphics, etc.)</li>
+                                            <li>Improved recovery from file corruption</li>
+                                            <li>Better compatibility with other modern applications</li>
+                                            <li>More editing capabilities and formatting options</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Best for:</strong> Most current users with Microsoft Word 2007 or newer, Office 365, or modern word processors</li>
+                                </ul>
+                                
+                                <h5 class="mt-3">DOC Format (Legacy)</h5>
+                                <ul>
+                                    <li><strong>Used in:</strong> Microsoft Word 97-2003</li>
+                                    <li><strong>File structure:</strong> Binary format, older and less flexible</li>
+                                    <li><strong>Advantages:</strong>
+                                        <ul>
+                                            <li>Compatible with older versions of Microsoft Word</li>
+                                            <li>May work better with some legacy systems or older software</li>
+                                            <li>Widely supported across many platforms and applications</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Best for:</strong> Users with older software (Word 2003 or earlier) or when compatibility with legacy systems is required</li>
+                                </ul>
+                                
+                                <p><strong>Our Recommendation:</strong></p>
+                                <ul>
+                                    <li>Choose <strong>DOCX</strong> (our default setting) if you're using modern software and want the best quality, smallest file size, and most editing capabilities</li>
+                                    <li>Choose <strong>DOC</strong> only if you specifically need compatibility with older software (Word 2003 or earlier) or legacy systems</li>
+                                </ul>
+                                
+                                <p>For most users, DOCX is the recommended format as it provides better quality, more features, and smaller file sizes. Modern versions of Word can open both formats, but DOCX offers more advantages for typical use cases.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                Is there a file size limit for PDF to Word conversion?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body faq-answer">
+                                <p>Our free PDF to Word converter supports files up to 50MB in size. This generous limit accommodates most standard documents, including:</p>
+                                
+                                <ul>
+                                    <li>Multi-page business reports and presentations</li>
+                                    <li>Academic papers and research documents</li>
+                                    <li>Legal documents and contracts</li>
+                                    <li>Brochures, catalogs, and marketing materials</li>
+                                    <li>Books and publications (or sections thereof)</li>
+                                </ul>
+                                
+                                <p>For context, a typical 100-page text-based PDF might be around 5-10MB, while a graphics-heavy 20-page document might approach 15-20MB. Our 50MB limit is sufficient for the vast majority of business, academic, and personal documents.</p>
+                                
+                                <p>If you have an exceptionally large PDF file that exceeds our limit, consider these approaches:</p>
+                                
+                                <ul>
+                                    <li><strong>Split your PDF:</strong> Use our PDF Splitter tool to divide your large PDF into smaller sections, convert each separately, and then combine the resulting Word documents.</li>
+                                    <li><strong>Compress your PDF:</strong> Try our PDF Compressor tool first to reduce the file size while maintaining quality, then convert the compressed version.</li>
+                                    <li><strong>Convert specific pages:</strong> If you only need to edit certain portions of a large document, extract just those pages before conversion.</li>
+                                </ul>
+                                
+                                <p>For files larger than 50MB, users with regular conversion needs might consider our premium subscription plans, which offer increased file size limits and additional features.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSix">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                What should I do if my PDF isn't converting properly?
+                            </button>
+                        </h2>
+                        <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body faq-answer">
+                                <p>If you're experiencing issues with your PDF to Word conversion, here are some troubleshooting steps and solutions:</p>
+                                
+                                <h5 class="mt-3">Common Issues and Solutions</h5>
+                                
+                                <p><strong>1. Text Recognition Problems</strong></p>
+                                <ul>
+                                    <li><strong>Issue:</strong> Text appears garbled, incorrect, or as images instead of editable text</li>
+                                    <li><strong>Solution:</strong> 
+                                        <ul>
+                                            <li>Ensure OCR is enabled for scanned documents</li>
+                                            <li>Try the "Highest" quality setting instead of "Balanced" or "Efficient"</li>
+                                            <li>For multilingual documents, try our specialized language-specific OCR converters</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                
+                                <p><strong>2. Layout and Formatting Issues</strong></p>
+                                <ul>
+                                    <li><strong>Issue:</strong> Tables, columns, or text arrangement doesn't match the original</li>
+                                    <li><strong>Solution:</strong>
+                                        <ul>
+                                            <li>Select "Highest" quality setting for complex layouts</li>
+                                            <li>For complex tables, try our specialized PDF to Excel converter first</li>
+                                            <li>Some manual reformatting may be necessary for very complex layouts</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                
+                                <p><strong>3. Image Quality or Missing Images</strong></p>
+                                <ul>
+                                    <li><strong>Issue:</strong> Images are low quality, missing, or misplaced</li>
+                                    <li><strong>Solution:</strong>
+                                        <ul>
+                                            <li>Use "Highest" quality setting to preserve image quality</li>
+                                            <li>For image-heavy documents, try converting sections separately</li>
+                                            <li>For critical images, consider extracting them separately with our PDF Image Extractor</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                
+                                <p><strong>4. Password-Protected or Secured PDFs</strong></p>
+                                <ul>
+                                    <li><strong>Issue:</strong> Converter cannot access the content of protected PDFs</li>
+                                    <li><strong>Solution:</strong>
+                                        <ul>
+                                            <li>Remove password protection before conversion (if you have the password)</li>
+                                            <li>Use our PDF Unlock tool if the document has user permissions but no owner password</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                
+                                <p><strong>5. Conversion Fails Completely</strong></p>
+                                <ul>
+                                    <li><strong>Issue:</strong> The converter returns an error or produces an empty file</li>
+                                    <li><strong>Solution:</strong>
+                                        <ul>
+                                            <li>Check if the PDF is corrupted by opening it in a PDF reader</li>
+                                            <li>Try our PDF Repair tool to fix corrupted documents</li>
+                                            <li>For large files, try converting smaller sections separately</li>
+                                            <li>Ensure your PDF doesn't contain non-standard features or DRM protection</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                
+                                <p>If you've tried these solutions and are still experiencing issues, please contact our support team. For critical documents, we may be able to suggest specialized approaches or provide personalized assistance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="additional-info py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="text-center mb-5">Why Choose ilovepdf.link's Free PDF to Word Converter</h2>
+                
+                <div class="mb-5">
+                    <h3>What Sets Our PDF to Word Converter Apart</h3>
+                    <p>In a landscape filled with online conversion tools, ilovepdf.link's PDF to Word converter stands out for its exceptional quality, ease of use, and commitment to user privacy:</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-check-circle text-primary me-2"></i> Superior Conversion Quality</h5>
+                                    <p>Our advanced algorithms preserve text, images, tables, and formatting with exceptional accuracy. We analyze document structure intelligently to maintain the look and feel of your original PDF in the editable Word format.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-check-circle text-primary me-2"></i> Advanced OCR Technology</h5>
+                                    <p>Our state-of-the-art Optical Character Recognition (OCR) can transform even scanned PDFs and image-based documents into fully editable text, recognizing multiple languages and various fonts with high accuracy.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-check-circle text-primary me-2"></i> Truly Free Service</h5>
+                                    <p>Unlike many competitors, our PDF to Word converter is completely free without watermarks, hidden fees, or artificial limitations. Convert PDFs up to 50MB without requiring registration or installation of software.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-check-circle text-primary me-2"></i> Privacy-Focused Approach</h5>
+                                    <p>Your documents never become our data. We automatically delete all files after conversion, use secure encrypted connections, and never analyze document content for any purpose other than conversion.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <h3>Best Practices for PDF to Word Conversion</h3>
+                    <p>To achieve the best results when converting your PDF documents to Word, consider these professional tips:</p>
+                    <ol class="mt-4">
+                        <li class="mb-3"><strong>Choose the right quality setting:</strong> For complex documents with tables, images, and multiple columns, use the "Highest" quality setting. For simpler documents, "Balanced" offers a good compromise between quality and file size.</li>
+                        <li class="mb-3"><strong>Enable OCR for scanned documents:</strong> If your PDF contains scanned pages or text within images, make sure OCR is enabled to convert these elements into editable text.</li>
+                        <li class="mb-3"><strong>Use DOCX format when possible:</strong> The modern DOCX format offers better editing capabilities, smaller file sizes, and improved compatibility with current software.</li>
+                        <li class="mb-3"><strong>Consider document complexity:</strong> Very complex layouts with many design elements may require some manual adjustments after conversion. For highly complex documents, consider converting sections separately.</li>
+                        <li class="mb-3"><strong>Check for font issues:</strong> After conversion, verify that fonts appear correct. If your PDF used uncommon fonts, you may need to adjust font selections in Word.</li>
+                        <li class="mb-3"><strong>Review tables and multi-column content:</strong> Pay special attention to tables and multi-column sections, as these can sometimes require minor adjustments to match the original layout.</li>
+                    </ol>
+                </div>
+                
+                <div class="alert alert-info mt-5" role="alert">
+                    <h4 class="alert-heading"><i class="fas fa-lightbulb me-2"></i> Pro Tip!</h4>
+                    <p>For PDFs with complex tables or numerical data, try our specialized PDF to Excel converter for those sections, then incorporate the tables into your Word document later. This approach often produces better results for data-heavy content.</p>
+                    <hr>
+                    <p class="mb-0">At ilovepdf.link, we offer a complete suite of PDF tools to handle your entire document workflow. In addition to our PDF to Word converter, explore our other tools like PDF compressor, PDF merger, and PDF to Excel converter to manage all your document conversion needs in one place.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const browseButton = document.getElementById('browseButton');
+        const fileInfoContainer = document.getElementById('fileInfoContainer');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const outputFileName = document.getElementById('outputFileName');
+        const outputFormat = document.getElementById('outputFormat');
+        const removeFileButton = document.getElementById('removeFileButton');
+        const convertButton = document.getElementById('convertButton');
+        const convertForm = document.getElementById('convertForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultFileName = document.getElementById('resultFileName');
+        const resultFileSize = document.getElementById('resultFileSize');
+        const downloadButton = document.getElementById('downloadButton');
+        const newConversionButton = document.getElementById('newConversionButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        // State variables
+        let currentFile = null;
+        let convertedFile = null;
+        let convertedFileName = '';
+        
+        // Handle browse button click
+        browseButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Handle drag and drop events
+        dropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+        });
+        
+        dropzone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+        });
+        
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle file processing
+        function handleFile(file) {
+            // Validate file type
+            const validExtensions = ['.pdf'];
+            const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+            
+            if (!validExtensions.includes(fileExtension)) {
+                alert('Please select a valid PDF document. Only PDF files are supported.');
+                return;
+            }
+            
+            // Check if file is a PDF based on MIME type
+            const validMimeTypes = [
+                'application/pdf'
+            ];
+            
+            if (!validMimeTypes.includes(file.type) && file.type !== '') {
+                alert('The selected file does not appear to be a valid PDF document.');
+                return;
+            }
+            
+            currentFile = file;
+            
+            // Update UI with file information
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            
+            // Update output filename based on the selected format
+            updateOutputFileName();
+            
+            // Show file info container
+            fileInfoContainer.classList.remove('d-none');
+            
+            // Enable convert button
+            convertButton.disabled = false;
+        }
+        
+        // Update output filename based on the selected format
+        function updateOutputFileName() {
+            if (!currentFile) return;
+            
+            const baseName = currentFile.name.substring(0, currentFile.name.lastIndexOf('.'));
+            const selectedFormat = outputFormat.value;
+            outputFileName.textContent = `${baseName}.${selectedFormat}`;
+        }
+        
+        // Handle output format change
+        outputFormat.addEventListener('change', updateOutputFileName);
+        
+        // Handle remove file button
+        removeFileButton.addEventListener('click', function() {
+            resetForm();
+        });
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Reset form to initial state
+        function resetForm() {
+            // Clear file input
+            fileInput.value = '';
+            
+            // Hide file info container
+            fileInfoContainer.classList.add('d-none');
+            
+            // Reset current file
+            currentFile = null;
+            
+            // Disable convert button
+            convertButton.disabled = true;
+        }
+        
+        // Handle form submission
+        convertForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentFile) {
+                alert('Please select a PDF document to convert.');
+                return;
+            }
+            
+            // Show loading overlay
+            loadingOverlay.style.display = 'flex';
+            loadingMessage.textContent = 'Converting PDF to Word...';
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            formData.append('format', outputFormat.value);
+            formData.append('quality', document.getElementById('quality').value);
+            formData.append('ocr', document.getElementById('ocrSwitch').checked ? 'true' : 'false');
+            
+            // Submit for conversion
+            fetch('/api/pdf-to-word/convert/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Conversion failed');
+                }
+                
+                // Get filename from the response headers
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = outputFileName.textContent;
+                
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                
+                convertedFileName = filename;
+                
+                // Get content type and size
+                const contentType = response.headers.get('Content-Type') || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                const contentLength = parseInt(response.headers.get('Content-Length')) || 0;
+                
+                return response.blob().then(blob => ({
+                    blob: blob,
+                    filename: filename,
+                    contentType: contentType,
+                    size: contentLength || blob.size
+                }));
+            })
+            .then(data => {
+                // Save converted blob
+                convertedFile = data.blob;
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+                
+                // Hide form elements
+                fileInfoContainer.classList.add('d-none');
+                convertButton.style.display = 'none';
+                
+                // Show result
+                resultContainer.style.display = 'block';
+                resultFileName.textContent = data.filename;
+                resultFileSize.textContent = formatFileSize(data.size);
+                
+                // Update UI to show success state
+                document.querySelector('.success-message').textContent = `Successfully converted to ${outputFormat.value.toUpperCase()}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during conversion. Please try again.');
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+            });
+        });
+        
+        // Handle download button
+        downloadButton.addEventListener('click', function() {
+            if (!convertedFile) return;
+            
+            // Show loading spinner on the download button
+            const originalButtonText = downloadButton.innerHTML;
+            downloadButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Downloading...';
+            downloadButton.disabled = true;
+            
+            // Short timeout to ensure the loading state is visible
+            setTimeout(() => {
+                const downloadUrl = URL.createObjectURL(convertedFile);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = convertedFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
+                
+                // Restore button after download starts
+                setTimeout(() => {
+                    downloadButton.innerHTML = originalButtonText;
+                    downloadButton.disabled = false;
+                }, 1000);
+            }, 500);
+        });
+        
+        // Handle new conversion button
+        newConversionButton.addEventListener('click', function() {
+            // Hide result container
+            resultContainer.style.display = 'none';
+            
+            // Show upload section
+            fileInfoContainer.classList.add('d-none');
+            convertButton.style.display = 'block';
+            
+            // Reset form
+            resetForm();
+            
+            // Clear previous conversion
+            convertedFile = null;
+            convertedFileName = '';
+        });
+    });
+</script>
+{% endblock %}
