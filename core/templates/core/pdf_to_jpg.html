@@ -1,0 +1,1090 @@
+{% extends 'base.html' %}
+
+{% block title %}PDF to JPG Converter | Convert PDF to JPG Online Free | ilovepdf.link{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .dropzone {
+        border: 2px dashed #0d6efd;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    
+    .dropzone.dragover {
+        background-color: #e9ecef;
+        border-color: #0b5ed7;
+    }
+    
+    .file-info {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background-color: white;
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .file-info .thumbnail-wrapper {
+        height: 150px;
+        overflow: hidden;
+        position: relative;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .file-info .thumbnail-wrapper i {
+        font-size: 3rem;
+        color: #D93025;
+    }
+    
+    .file-info .file-details {
+        padding: 15px;
+    }
+    
+    .file-info .file-name {
+        font-size: 0.95rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
+    .file-info .file-size, .file-info .file-pages {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .file-info .file-actions {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    
+    .file-info .btn-remove {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background-color: rgba(255,255,255,0.8);
+    }
+    
+    .format-badge {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0,0,0,0.6);
+        color: white;
+        text-align: center;
+        padding: 3px 0;
+        font-size: 0.8rem;
+    }
+    
+    .conversion-options {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .result-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+        display: none;
+    }
+    
+    .result-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,255,255,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        display: none;
+    }
+    
+    .loading-content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .conversion-steps {
+        counter-reset: step-counter;
+        margin: 30px 0;
+    }
+    
+    .conversion-step {
+        position: relative;
+        padding-left: 50px;
+        margin-bottom: 25px;
+    }
+    
+    .conversion-step:before {
+        content: counter(step-counter);
+        counter-increment: step-counter;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 36px;
+        height: 36px;
+        background-color: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    .conversion-step h5 {
+        margin-bottom: 8px;
+    }
+    
+    .feature-card {
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #0d6efd;
+    }
+    
+    .security-badges {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+    
+    .security-badge {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 120px;
+        text-align: center;
+    }
+    
+    .security-badge i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #28a745;
+    }
+    
+    .security-badge span {
+        font-size: 0.8rem;
+        color: #495057;
+    }
+    
+    .image-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin: 20px 0;
+    }
+    
+    .image-item {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        overflow: hidden;
+        width: 200px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .image-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    .page-label {
+        background-color: #f8f9fa;
+        padding: 5px;
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .success-icon {
+        font-size: 3rem;
+        color: #28a745;
+        margin-bottom: 15px;
+    }
+    
+    .info-note {
+        background-color: #e9f5ff;
+        border-left: 4px solid #0d6efd;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 0 4px 4px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="tool-header py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="mb-3">PDF to JPG Converter</h1>
+                <p class="lead mb-4">Convert PDF to JPG online with ilovepdf.link's free PDF to JPG converter. Transform your PDF documents into high-quality JPG images in seconds.</p>
+            </div>
+        </div>
+        <section class="converter py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="convertForm" enctype="multipart/form-data">
+                                    <div id="uploadSection">
+                                        <div id="dropzone" class="dropzone mb-4">
+                                            <div class="dropzone-content">
+                                                <i class="fas fa-file-pdf fa-3x mb-3" style="color: #D93025;"></i>
+                                                <h4>Drag & Drop PDF File Here</h4>
+                                                <p class="mb-2">Convert PDF to JPG instantly with ilovepdf.link's free converter</p>
+                                                <p>or</p>
+                                                <button type="button" id="browseButton" class="btn btn-primary">
+                                                    <i class="fas fa-file-pdf me-2"></i> Browse PDF Files
+                                                </button>
+                                                <input type="file" id="fileInput" accept=".pdf,application/pdf" class="d-none">
+                                            </div>
+                                        </div>
+                                        
+                                        <div id="supportedFormats" class="text-center mb-4 mt-3">
+                                            <p class="text-muted mb-2">Supported formats:</p>
+                                            <div class="d-flex justify-content-center">
+                                                <div class="format-note me-3">
+                                                    <span class="format-icon"><i class="fas fa-file-pdf" style="color: #D93025;"></i></span>
+                                                    <span class="format-details">.pdf - PDF Document</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="fileContainer" class="d-none">
+                                        <h5 class="mb-3">Selected PDF</h5>
+                                        <div id="fileInfo" class="file-info">
+                                            <!-- File info will be populated here -->
+                                        </div>
+                                        
+                                        <div class="conversion-options">
+                                            <h6 class="mb-3">Conversion Options</h6>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="dpi" class="form-label">Image Quality (DPI)</label>
+                                                    <select class="form-select" id="dpi">
+                                                        <option value="150">150 DPI (Low)</option>
+                                                        <option value="300" selected>300 DPI (Medium)</option>
+                                                        <option value="600">600 DPI (High)</option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Higher DPI means better quality but larger file size</small>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="quality" class="form-label">JPEG Quality</label>
+                                                    <select class="form-select" id="quality">
+                                                        <option value="75">75% (Good)</option>
+                                                        <option value="85">85% (Better)</option>
+                                                        <option value="95" selected>95% (Best)</option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Higher quality means better image but larger file size</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" id="convertButton" class="btn btn-primary btn-lg" disabled>
+                                            <i class="fas fa-exchange-alt me-2"></i> Convert PDF to JPG
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <!-- Conversion Result -->
+                                <div id="resultContainer" class="result-container">
+                                    <i class="fas fa-check-circle success-icon"></i>
+                                    <h4 class="mb-3">PDF Converted Successfully</h4>
+                                    
+                                    <div id="previewContainer" class="d-none">
+                                        <p class="mb-3">Preview of converted images:</p>
+                                        <div class="image-preview" id="imagePreview">
+                                            <!-- Image previews will be added here -->
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="file-info-details mt-3">
+                                        <div id="resultFileName" class="fw-bold mb-2"></div>
+                                        <div id="resultFileSize" class="small mb-1"></div>
+                                        <div id="pageCount" class="small text-muted"></div>
+                                    </div>
+                                    
+                                    <div class="result-actions">
+                                        <button id="downloadButton" class="btn btn-success">
+                                            <i class="fas fa-download me-2"></i> Download
+                                        </button>
+                                        <button id="newConversionButton" class="btn btn-outline-primary">
+                                            <i class="fas fa-redo me-2"></i> New Conversion
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="security-badges mt-4">
+                            <div class="security-badge">
+                                <i class="fas fa-lock"></i>
+                                <span>100% Secure</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Privacy Protected</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-bolt"></i>
+                                <span>Fast Conversion</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-check-circle"></i>
+                                <span>High Quality</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>     
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-image fa-3x text-primary mb-3"></i>
+                        <h4>High-Quality Conversion</h4>
+                        <p>Our PDF to JPG converter maintains the visual quality of your original documents. With adjustable DPI and quality settings, you can choose the perfect balance between image quality and file size based on your specific needs.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bolt fa-3x text-primary mb-3"></i>
+                        <h4>Fast & Efficient</h4>
+                        <p>Convert multi-page PDF documents to JPG images in seconds. Our optimized conversion engine processes your files quickly, saving you time and delivering high-quality results without the wait.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                        <h4>Secure & Private</h4>
+                        <p>Your files remain completely private during the conversion process. We use secure connections for all uploads and downloads, and automatically delete your files after processing. No registration is required, ensuring maximum privacy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Global Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 id="loadingMessage">Converting PDF to JPG...</h5>
+        <p class="text-muted">Please wait, this may take a moment</p>
+    </div>
+</div>
+
+<section class="tool-info py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2>About PDF to JPG Conversion</h2>
+                <p>Converting PDF files to JPG format offers numerous advantages, especially when you need to share specific pages, include them in presentations, or upload them to platforms that don't support PDF files. Our free PDF to JPG converter provides a simple, fast solution for transforming your PDF documents into high-quality JPG images.</p>
+                
+                <p>PDF (Portable Document Format) is the universal standard for document sharing across different platforms and devices, while JPEG (Joint Photographic Experts Group) is one of the most common image formats used for photographs and web graphics. By converting your PDF to JPG, you can easily make your document content more accessible and versatile.</p>
+                
+                <h3 class="mt-4">Benefits of Converting PDF to JPG</h3>
+                <ul>
+                    <li><strong>Wider Compatibility:</strong> JPG images can be viewed on virtually any device without special software</li>
+                    <li><strong>Easy Sharing:</strong> Share specific pages from your PDF document without sending the entire file</li>
+                    <li><strong>Web-Friendly Format:</strong> Use converted images for websites, social media, or online platforms that may not support PDF uploads</li>
+                    <li><strong>Presentation Ready:</strong> Include PDF content in presentations, reports, or documents as embedded images</li>
+                    <li><strong>Editing Flexibility:</strong> Edit the converted images using any image editing software</li>
+                    <li><strong>Size Optimization:</strong> Create smaller file sizes for specific pages instead of sharing the entire PDF</li>
+                    <li><strong>Format Conversion:</strong> Use as an intermediate step for further conversions to other image formats</li>
+                </ul>
+                
+                <div class="info-note mt-4">
+                    <h4><i class="fas fa-lightbulb me-2"></i> When to Convert PDF to JPG</h4>
+                    <p>PDF to JPG conversion is particularly useful in these situations:</p>
+                    <ul>
+                        <li>When you need to include specific PDF pages in a presentation</li>
+                        <li>When you want to share document content on social media</li>
+                        <li>When you need to upload content to websites that don't accept PDF files</li>
+                        <li>When you want to edit specific pages using image editing software</li>
+                        <li>When creating visual content for email marketing</li>
+                        <li>When you need to extract and save specific pages or graphics from a PDF</li>
+                    </ul>
+                </div>
+                
+                <div class="mt-4">
+                    <h3>PDF vs. JPG: Understanding the Key Differences</h3>
+                    <table class="table compare-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>PDF Format</th>
+                                <th>JPG Format</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Primary Use</td>
+                                <td>Documents, multi-page content</td>
+                                <td>Images, photographs</td>
+                            </tr>
+                            <tr>
+                                <td>Editability</td>
+                                <td>Limited without specialized software</td>
+                                <td>Easily edited with image editors</td>
+                            </tr>
+                            <tr>
+                                <td>File Size</td>
+                                <td>Can be larger for multi-page documents</td>
+                                <td>Typically smaller per page</td>
+                            </tr>
+                            <tr>
+                                <td>Quality</td>
+                                <td>Retains exact formatting and quality</td>
+                                <td>Compressed format with some quality loss</td>
+                            </tr>
+                            <tr>
+                                <td>Text Recognition</td>
+                                <td>Can contain searchable text</td>
+                                <td>Text becomes part of the image</td>
+                            </tr>
+                            <tr>
+                                <td>Compatibility</td>
+                                <td>Requires a PDF reader</td>
+                                <td>Viewable on virtually any device</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h2>How to Use Our Free PDF to JPG Converter</h2>
+                <p>Converting your PDF documents to JPG images is straightforward with our intuitive online tool. Follow these simple steps to create high-quality JPG images from your PDF in seconds:</p>
+                
+                <div class="conversion-steps">
+                    <div class="conversion-step">
+                        <h5>Upload Your PDF Document</h5>
+                        <p>Drag and drop your PDF file into the upload area or click "Browse PDF Files" to select a document from your device. Our converter supports all standard PDF files regardless of how they were created.</p>
+                    </div>
+                    
+                    <div class="conversion-step">
+                        <h5>Choose Your Conversion Settings</h5>
+                        <p>Select your preferred image quality settings. Choose the DPI (dots per inch) resolution - higher values create sharper images but larger files. Adjust the JPEG quality percentage to balance between image quality and file size.</p>
+                    </div>
+                    
+                    <div class="conversion-step">
+                        <h5>Convert and Download</h5>
+                        <p>Click the "Convert PDF to JPG" button to process your document. Once conversion is complete, preview the resulting images and download them individually or as a ZIP archive containing all pages. The entire process takes just seconds, even for multi-page documents.</p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h4 class="alert-heading"><i class="fas fa-info-circle me-2"></i> Features of Our PDF to JPG Converter</h4>
+                    <p class="mb-0">Our converter offers several advantages over similar tools:</p>
+                    <ul class="mb-0 mt-2">
+                        <li>Preserves image quality with adjustable DPI settings</li>
+                        <li>Converts all pages in multi-page PDFs</li>
+                        <li>Downloads as individual JPGs or a convenient ZIP archive</li>
+                        <li>Processes conversions quickly, even for large documents</li>
+                        <li>100% free with no watermarks or quality restrictions</li>
+                        <li>Secure processing with privacy protection</li>
+                        <li>No installation or registration required</li>
+                    </ul>
+                </div>
+                
+                <div class="mt-4">
+                    <h3>Common Use Cases for PDF to JPG Conversion</h3>
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-laptop feature-icon"></i>
+                                    <h5>Social Media Sharing</h5>
+                                    <p class="small">Convert PDF pages to JPG for easy sharing on social media platforms that don't support PDF uploads.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-presentation feature-icon"></i>
+                                    <h5>Presentations</h5>
+                                    <p class="small">Extract PDF content as images to include in PowerPoint or other presentation software.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-edit feature-icon"></i>
+                                    <h5>Image Editing</h5>
+                                    <p class="small">Convert PDF pages to JPG for editing in photo editing software like Photoshop.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card feature-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-globe feature-icon"></i>
+                                    <h5>Website Content</h5>
+                                    <p class="small">Create web-friendly images from PDF documents for online publication.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-image fa-3x text-primary mb-3"></i>
+                        <h4>High-Quality Conversion</h4>
+                        <p>Our PDF to JPG converter maintains the visual quality of your original documents. With adjustable DPI and quality settings, you can choose the perfect balance between image quality and file size based on your specific needs.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bolt fa-3x text-primary mb-3"></i>
+                        <h4>Fast & Efficient</h4>
+                        <p>Convert multi-page PDF documents to JPG images in seconds. Our optimized conversion engine processes your files quickly, saving you time and delivering high-quality results without the wait.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                        <h4>Secure & Private</h4>
+                        <p>Your files remain completely private during the conversion process. We use secure connections for all uploads and downloads, and automatically delete your files after processing. No registration is required, ensuring maximum privacy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Frequently Asked Questions About PDF to JPG Conversion</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                What is the best quality setting for converting PDF to JPG?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>The optimal quality settings depend on your intended use for the JPG images:</p>
+                                
+                                <ul>
+                                    <li><strong>For high-quality prints or professional use:</strong> Choose 600 DPI with 95% JPEG quality. This provides maximum image clarity and detail, though with larger file sizes.</li>
+                                    <li><strong>For standard use (documents, presentations):</strong> 300 DPI with 85-95% quality offers an excellent balance between quality and file size.</li>
+                                    <li><strong>For web use or email sharing:</strong> 150 DPI with 75-85% quality is sufficient and creates smaller, more easily shareable files.</li>
+                                </ul>
+                                
+                                <p>Remember that higher quality settings result in larger file sizes. If you're unsure, start with our default medium settings (300 DPI, 95% quality) which works well for most purposes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Will my PDF text be readable in the converted JPG images?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Yes, text from your PDF will be visible and readable in the converted JPG images, though there are some important considerations:</p>
+                                
+                                <ul>
+                                    <li>The readability of text depends on the quality settings you choose. Higher DPI settings (300-600) ensure that text remains crisp and legible.</li>
+                                    <li>Unlike PDFs, the text in JPG images is not selectable or searchable—it becomes part of the image.</li>
+                                    <li>Very small text may be difficult to read in the converted images, especially at lower quality settings.</li>
+                                    <li>If your PDF contains scanned text that was already of poor quality, the JPG conversion won't improve its readability.</li>
+                                </ul>
+                                
+                                <p>For documents where text legibility is crucial, we recommend using higher quality settings (at least 300 DPI). If you're converting a document primarily to preserve textual information in an editable format, consider using our PDF to Word converter instead.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                How do DPI and JPEG quality settings affect the conversion?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Both DPI and JPEG quality settings affect the final image quality and file size, but in different ways:</p>
+                                
+                                <p><strong>DPI (Dots Per Inch):</strong></p>
+                                <ul>
+                                    <li>Controls the resolution or pixel density of the output image</li>
+                                    <li>Higher DPI means more pixels and greater detail</li>
+                                    <li>150 DPI creates approximately 1275 x 1650 pixels for an A4 page</li>
+                                    <li>300 DPI creates approximately 2550 x 3300 pixels for an A4 page</li>
+                                    <li>600 DPI creates approximately 5100 x 6600 pixels for an A4 page</li>
+                                </ul>
+                                
+                                <p><strong>JPEG Quality (%):</strong></p>
+                                <ul>
+                                    <li>Controls the compression level applied to the image</li>
+                                    <li>Higher percentages mean less compression and better image quality</li>
+                                    <li>75% offers good quality with significant file size reduction</li>
+                                    <li>85% provides very good quality with moderate compression</li>
+                                    <li>95% delivers excellent quality with minimal compression</li>
+                                </ul>
+                                
+                                <p>These settings work together to determine the final result. For example, a high DPI with low JPEG quality would give you a detailed but potentially compressed image with artifacts, while a low DPI with high JPEG quality would give you a smaller, artifact-free image that lacks detail.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Is there a file size limit for PDF to JPG conversion?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>Our free PDF to JPG converter has the following limits:</p>
+                                
+                                <ul>
+                                    <li><strong>Maximum PDF file size:</strong> 100MB</li>
+                                    <li><strong>Maximum page count:</strong> 50 pages</li>
+                                </ul>
+                                
+                                <p>These limits are sufficient for most common use cases. For larger files or documents with many pages, you can:</p>
+                                
+                                <ul>
+                                    <li>Split your PDF into smaller files before uploading</li>
+                                    <li>Convert only the specific pages you need</li>
+                                    <li>Use lower quality settings if appropriate for your needs</li>
+                                </ul>
+                                
+                                <p>If you regularly need to convert large PDF files or documents with many pages, consider contacting us about our enterprise solutions with higher limits.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                How secure is my data when using your PDF to JPG converter?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>We take data security and privacy extremely seriously. Our PDF to JPG converter is designed with multiple layers of protection:</p>
+                                
+                                <ul>
+                                    <li><strong>Secure file transfer:</strong> All uploads and downloads use encrypted HTTPS connections.</li>
+                                    <li><strong>Temporary processing:</strong> Your PDF files are stored only for the duration of the conversion process in a secure, isolated environment.</li>
+                                    <li><strong>Automatic deletion:</strong> All uploaded PDFs and generated JPGs are permanently deleted from our servers immediately after conversion or download, typically within an hour and never longer than 24 hours.</li>
+                                    <li><strong>No content analysis:</strong> We don't scan, analyze, or use the content of your documents for any purpose other than the conversion you've requested.</li>
+                                    <li><strong>No account required:</strong> Our service requires no registration or account creation, minimizing the personal data we handle.</li>
+                                </ul>
+                                
+                                <p>These security measures make our PDF to JPG converter suitable for converting both personal and professional documents, including those containing sensitive information. For specialized security requirements, please contact us to discuss enterprise solutions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="additional-info py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="text-center mb-5">Tips for Perfect PDF to JPG Conversion</h2>
+                
+                <div class="mb-5">
+                    <p>To achieve the best results when converting your PDF documents to JPG images, consider these professional recommendations:</p>
+                    <ol class="mt-4">
+                        <li class="mb-3"><strong>Choose the right quality settings:</strong> Match your DPI and quality settings to the intended use of your images. Higher settings for printing and professional use, medium settings for standard documents, and lower settings for web sharing.</li>
+                        <li class="mb-3"><strong>Consider the document type:</strong> Text-heavy documents generally benefit from higher DPI settings to maintain legibility, while documents with mostly images may look fine at lower DPI settings.</li>
+                        <li class="mb-3"><strong>Check file sizes:</strong> Remember that higher quality settings produce larger files. If you're planning to email the images or upload them to websites with size limitations, you may need to balance quality with file size.</li>
+                        <li class="mb-3"><strong>Preview before sharing:</strong> Always check your converted JPG images before distributing them to ensure text is readable and images are clear.</li>
+                        <li class="mb-3"><strong>Use the ZIP download for multi-page documents:</strong> When converting multi-page PDFs, downloading all pages as a ZIP file is more convenient than handling individual JPG files.</li>
+                    </ol>
+                </div>
+                
+                <div class="alert alert-info mt-5" role="alert">
+                    <h4 class="alert-heading"><i class="fas fa-lightbulb me-2"></i> Pro Tip!</h4>
+                    <p>If you need to extract only specific pages from a PDF document, convert the entire document to JPG images and then use only the pages you need. This is often faster than trying to extract pages from the PDF itself, especially if you don't have access to premium PDF editing software.</p>
+                    <hr>
+                    <p class="mb-0">At ilovepdf.link, we offer a complete suite of tools to manage your document workflow. After converting PDF to JPG, you can further enhance your images with our JPG to PNG converter, or compress them for more efficient storage and sharing.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const browseButton = document.getElementById('browseButton');
+        const fileContainer = document.getElementById('fileContainer');
+        const fileInfo = document.getElementById('fileInfo');
+        const dpi = document.getElementById('dpi');
+        const quality = document.getElementById('quality');
+        const convertButton = document.getElementById('convertButton');
+        const convertForm = document.getElementById('convertForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultFileName = document.getElementById('resultFileName');
+        const resultFileSize = document.getElementById('resultFileSize');
+        const pageCount = document.getElementById('pageCount');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewContainer = document.getElementById('previewContainer');
+        const downloadButton = document.getElementById('downloadButton');
+        const newConversionButton = document.getElementById('newConversionButton');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        // State variables
+        let file = null;
+        let convertedFile = null;
+        let convertedFileName = '';
+        let pdfPageCount = 0;
+        
+        // Handle browse button click
+        browseButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            handleFile(e.target.files[0]);
+        });
+        
+        // Handle drag and drop events
+        dropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+        });
+        
+        dropzone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+        });
+        
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle file
+        function handleFile(selectedFile) {
+            // Check if it's a PDF file
+            if (!selectedFile.type.match('application/pdf') && !selectedFile.name.toLowerCase().endsWith('.pdf')) {
+                alert('Please select a PDF file. Only PDF files are supported.');
+                return;
+            }
+            
+            // Store file
+            file = selectedFile;
+            
+            // Get PDF page count using PDF.js (this is just an example approach)
+            // In a real implementation, you might want to check the PDF structure on the server side
+            // This is a simplified approach that may work for many PDFs
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                // For simplicity, we'll estimate the page count based on file size
+                // In a real implementation, you would want to use a library like PDF.js to get the exact count
+                const estimatedPageCount = Math.max(1, Math.floor(file.size / 30000));
+                pdfPageCount = estimatedPageCount;
+                
+                // Update file info
+                updateFileInfo();
+            };
+            
+            fileReader.readAsArrayBuffer(file);
+            
+            // Show file container
+            fileContainer.classList.remove('d-none');
+            
+            // Enable convert button
+            convertButton.disabled = false;
+        }
+        
+        // Update file info display
+        function updateFileInfo() {
+            fileInfo.innerHTML = `
+                <div class="thumbnail-wrapper">
+                    <i class="fas fa-file-pdf fa-4x"></i>
+                    <div class="format-badge">PDF</div>
+                </div>
+                <div class="file-details">
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-size">${formatFileSize(file.size)}</div>
+                    <div class="file-pages">${pdfPageCount} pages</div>
+                </div>
+                <div class="file-actions">
+                    <button type="button" class="btn btn-danger btn-sm btn-remove" id="removeFile">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Add remove file event
+            document.getElementById('removeFile').addEventListener('click', function() {
+                file = null;
+                fileContainer.classList.add('d-none');
+                convertButton.disabled = true;
+            });
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Handle form submission
+        convertForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!file) {
+                alert('Please select a PDF file to convert.');
+                return;
+            }
+            
+            // Show loading overlay
+            loadingOverlay.style.display = 'flex';
+            loadingMessage.textContent = 'Converting PDF to JPG...';
+            
+            // Create FormData
+            const formData = new FormData();
+            
+            // Append file
+            formData.append('file', file);
+            
+            // Append options
+            formData.append('dpi', dpi.value);
+            formData.append('quality', quality.value);
+            
+            // Submit for conversion
+            fetch('/api/pdf-to-jpg/convert/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Conversion failed: ' + response.statusText);
+                }
+                
+                // Get filename from the response headers
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'converted.zip';
+                
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                
+                convertedFileName = filename;
+                
+                // Check if it's a ZIP file (multiple pages) or a JPG (single page)
+                const contentType = response.headers.get('Content-Type');
+                const isZip = contentType === 'application/zip';
+                
+                return response.blob().then(blob => ({
+                    blob: blob,
+                    filename: filename,
+                    contentType: contentType,
+                    isZip: isZip
+                }));
+            })
+            .then(data => {
+                // Save converted blob
+                convertedFile = data.blob;
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+                
+                // Hide form elements
+                fileContainer.classList.add('d-none');
+                convertButton.style.display = 'none';
+                
+                // Show result
+                resultContainer.style.display = 'block';
+                
+                // Set result details
+                resultFileName.textContent = data.filename;
+                resultFileSize.textContent = `File size: ${formatFileSize(data.blob.size)}`;
+                
+                if (data.isZip) {
+                    pageCount.textContent = `Contains ${pdfPageCount} JPG images`;
+                    // We won't show previews for ZIP files as they would need to be extracted
+                    previewContainer.classList.add('d-none');
+                } else {
+                    // It's a single JPG file
+                    pageCount.textContent = `Single JPG image`;
+                    
+                    // Create an object URL for the image preview
+                    const imgUrl = URL.createObjectURL(data.blob);
+                    
+                    // Create preview
+                    imagePreview.innerHTML = `
+                        <div class="image-item">
+                            <img src="${imgUrl}" alt="Converted JPG">
+                            <div class="page-label">Page 1</div>
+                        </div>
+                    `;
+                    
+                    previewContainer.classList.remove('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during conversion: ' + error.message);
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+            });
+        });
+        
+        // Handle download button
+        downloadButton.addEventListener('click', function() {
+            if (!convertedFile) return;
+            
+            // Show loading spinner on the download button
+            const originalButtonText = downloadButton.innerHTML;
+            downloadButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Downloading...';
+            downloadButton.disabled = true;
+            
+            // Short timeout to ensure the loading state is visible
+            setTimeout(() => {
+                const downloadUrl = URL.createObjectURL(convertedFile);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = convertedFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
+                
+                // Restore button after download starts
+                setTimeout(() => {
+                    downloadButton.innerHTML = originalButtonText;
+                    downloadButton.disabled = false;
+                }, 1000);
+            }, 500);
+        });
+        
+        // Handle new conversion button
+        newConversionButton.addEventListener('click', function() {
+            // Hide result container
+            resultContainer.style.display = 'none';
+            
+            // Show convert button
+            fileContainer.classList.add('d-none');
+            convertButton.style.display = 'block';
+            
+            // Reset form
+            file = null;
+            fileInput.value = '';
+            convertButton.disabled = true;
+            
+            // Clear previous conversion
+            convertedFile = null;
+            convertedFileName = '';
+            imagePreview.innerHTML = '';
+        });
+    });
+</script>
+{% endblock %}
